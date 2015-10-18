@@ -1,0 +1,74 @@
+<!-- Add/Edit Recipe Section -->
+<div class="section-container" id="add-edit-recipe-section-id" tabindex="0">
+    <hr class="section-divider">
+    <div>
+        <h2 class="section-heading" data-l10n-id="ln10-add-recipe-header-part1">a<span>&nbsp;</span>
+            <span class="text-muted" data-l10n-id="ln10-add-recipe-header-part2"></span>
+            <span class="create-operation-js small" data-l10n-id="ln10-add-recipe-subtitle"></span>
+            <span class="update-operation-js small"></span>
+        </h2>
+    </div>
+
+    <div class="well well-sm recipe-form-box col-lg-12 float-right">
+        <form id="recipe-form-id" role="form" dir="rtl" class="input-md" data-toggle="validator">
+            <div class="col-sm-8 col-xs-12 float-right form-group">
+                <span>*&nbsp;</span><label class="recipe-label" for="recipe-name-input-id" data-l10n-id="ln10-recipe-name"></label>
+                <input type="text" id="recipe-name-input-id" class="form-control input-md" name="recipeName" required>
+                <span class="help-block display-none" data-l10n-id="ln10-empty-name-error"></span>
+            </div>
+            <div class="col-sm-4 col-xs-12 float-right">
+                <label class="recipe-label" for="recipe-cuisine-input-id" data-l10n-id="ln10-recipe-type"></label>
+                <input type=text list="cuisines-datalist" id="recipe-cuisine-input-id" class="form-control input-md">
+            </div>
+
+            <div class="col-sm-8 col-xs-12 float-right">
+                <div>
+                    <label class="recipe-label" for="recipe-method-input-id" data-l10n-id="ln10-recipe-method"></label>
+                </div>
+                <div>
+                    <textarea class="form-control input-md" id="recipe-method-input-id" required spellcheck="false"></textarea>
+                </div>
+            </div>
+
+            <div class="col-sm-4 col-xs-12 float-right">
+                <div>
+                    <label class="recipe-label" for="recipe-ingreds-input-id" data-l10n-id="ln10-recipe-ingreds"></label>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-condensed ingred-table form-control input-md" id="recipe-ingreds-input-id">
+                        <thead>
+                        <tr>
+                            <th class="table-cell-lg recipe-label" data-l10n-id="ln10-recipe-ingred-name"></th>
+                            <th class="table-cell-sm recipe-label" data-l10n-id="ln10-recipe-ingred-qty"></th>
+                            <th class="table-cell-sm recipe-label" data-l10n-id="ln10-recipe-ingred-units"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <button type="button" id="btn-add-ingred-rows-id" class="btn btn-sm btn-default float-right">
+                    <span class="glyphicon glyphicon-plus-sign"></span>
+                </button>
+
+            </div>
+
+            <div class="col-xs-12 float-right btn-group">
+                <!--The div neutralizes floating behaviour of the child elements and
+                helps to keep the proper elements direction, alignment etc.
+                -->
+                <div class="align-center">
+                    <button type="button" id="btn-save-recipe-id" class="btn btn-default">
+                        <span class="glyphicon glyphicon-plus-sign"></span>
+                        <span>&nbsp;</span><span data-l10n-id="ln10-save-recipe"></span></button>
+                    <button type="button" id="btn-clear-recipe-id" class="btn btn-default">
+                        <span class="glyphicon glyphicon-remove-sign"></span>
+                        <span>&nbsp;</span><span data-l10n-id="ln10-clear-recipe"></span></button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>

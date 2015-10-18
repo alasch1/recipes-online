@@ -1,0 +1,56 @@
+﻿.Hidden {
+    display: none;
+}
+
+.TraceContainer {
+    width: 33%;
+    height: 25%;
+    min-width: 400px;
+    min-height: 150px;
+    position:absolute;
+    top:300px;
+    right:3px;
+    z-index:1;
+    background-color:#CCC;
+    z-index: 10001;
+    direction: ltr;
+}
+
+.Trace
+{
+    font-size:11px;
+    font-family:Arial, Helvetica, Sans-serif;
+    border: solid 1px Gray;
+    overflow: scroll;
+    background-color:Beige;
+    white-space:nowrap;
+    width: 100%;
+    height: 100%;
+}
+
+textarea.Trace {
+    background: white;
+    min-height: 150px;
+}
+
+.Trace .logItem {
+    border-bottom: solid 1px #999;
+    padding: 2px 0px;
+}
+.logLevelDebug /*Debug*/
+{
+    color:Gray;
+}
+.logLevelInfo /*.Information*/
+{
+    color:Black;
+}
+.logLevelWarning /*Warning*/
+{
+    color:orange;
+}
+.logLevelError /*Error*/
+{
+    color:Red;
+    background-color:Yellow;
+}

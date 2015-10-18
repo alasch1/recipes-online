@@ -1,0 +1,301 @@
+/*!
+ * Start Bootstrap - One Page Wonder HTML Template (http://startbootstrap.com)
+ * Code licensed under the Apache License v2.0.
+ * For details, see http://www.apache.org/licenses/LICENSE-2.0.
+ */
+
+body {
+    margin-top: 50px; /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+    direction: rtl;
+}
+
+.header-image {
+    display: block;
+    text-align: center;
+    /*background: url('../images/salt-n-pepper.jpg') no-repeat center center scroll;*/
+    background: url('../images/three-cats.png') no-repeat center center scroll;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+    padding: 0;
+    min-height: 250px;
+    margin-bottom: -20px;
+}
+
+
+.headline {
+    /*padding: 100px 0;*/
+    /*padding:45px;*/
+    /*overflow: auto;*/
+}
+
+.headline .container {
+    padding: 0 150px 0;
+}
+
+.headline h1 {
+    font-size: 55px;
+}
+
+.cookbook-title {
+    /*font-size: 72px;*/
+    color:orangered;
+    margin-top:220px;
+    margin-bottom: 0;
+    text-shadow: 2px 2px 5px white, 0 0 15px yellow, 0 0 15px olive;
+}
+
+.headline h2 {
+    font-size: 65px;
+    background: #fff;
+    background: rgba(255,255,255,0.9);
+}
+
+.section-divider {
+    /*margin: 0 0 20px 0;*/
+    margin: 20px 0 20px 0;
+}
+
+.section-container {
+    overflow: hidden;
+    width:100%;
+    height: 100%;
+    margin-bottom: 20px;
+}
+
+.section-heading {
+    font-size: 36px;
+    text-align: right;
+    padding-top: 20px;
+    padding-bottom: 15px;
+}
+
+footer {
+    margin: 50px 0;
+}
+
+@media(max-width:1200px) {
+    .headline h1 {
+        font-size: 120px;
+    }
+
+    .headline h2 {
+        font-size: 63px;
+    }
+
+    .section-divider {
+        margin: 50px 0;
+    }
+
+    .section-heading {
+        font-size: 35px;
+        text-align: right;
+    }
+}
+
+@media(max-width:991px) {
+    .headline h1 {
+        font-size: 105px;
+    }
+
+    .headline h2 {
+        font-size: 50px;
+    }
+
+    .section-divider {
+        margin: 40px 0;
+    }
+
+    .section-heading {
+        font-size: 30px;
+    }
+}
+
+@media(max-width:768px) {
+    .container {
+        margin: 0 15px;
+    }
+
+    .section-divider {
+        margin: 40px 0;
+    }
+
+    .section-heading {
+        font-size: 25px;
+        text-align: right;
+    }
+}
+
+@media(max-width:668px) {
+    .headline h1 {
+        font-size: 70px;
+    }
+
+    .headline h2 {
+        font-size: 32px;
+    }
+
+    .section-divider {
+        margin: 30px 0;
+    }
+}
+
+@media(max-width:640px) {
+    .headline {
+        padding: 75px 0 25px 0;
+    }
+
+    .headline h1 {
+        font-size: 60px;
+    }
+
+    .headline h2 {
+        font-size: 30px;
+    }
+}
+
+@media(max-width:375px) {
+    .section-divider {
+        margin: 10px 0;
+    }
+}
+
+.well-color {
+    background-color: #f5f5f5;
+}
+
+.cuisine-container {
+    background-color: transparent;
+    padding-left:10px;
+    float: right;
+}
+
+.cuisine-container h3 {
+    margin: 10px;
+    margin-bottom: 0;
+}
+
+.cuisine-inner-box {
+    border: 1px solid #e3e3e3;
+    border-radius: 15px 50px;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+    /*padding: 19px;*/
+    margin: 2px 2px 19px;
+    color: navy;
+}
+
+.cuisine-container h3 {
+    font-size: 19px;
+    color: #337ab7;
+}
+
+.recipes-index {
+    min-height: 100px;
+    min-width: 150px;
+}
+
+.recipe-view-heading {
+    margin-top:5px;
+}
+
+.tab-content>.tab-pane {
+    margin-top:5px;
+    font-size: medium;
+    font-weight: lighter;
+}
+
+.tab > a {
+    font-size: medium;
+}
+
+.recipe-view-nav {
+    /*width:100%;*/
+    padding-right: 0px;
+}
+
+.recipe-view-tabs {
+    padding-top: 0;
+    margin-top: 0;
+    min-height: 100px;
+    vertical-align: top;
+}
+
+.display-block {
+    display: block;
+}
+
+.recipe-label {
+    text-decoration: underline;
+    color:navy;
+}
+
+.add-recipe-box{
+    direction: rtl;
+    color:navy;
+}
+
+.float-right {
+    float: right;
+    direction: rtl;
+}
+
+form label input {
+    text-align: right;
+    float: right;
+    direction: rtl;
+}
+
+form label {
+    padding-top:5px;
+}
+
+.align-center {
+    text-align: center;
+}
+
+.ingred-table {
+    height: 100%;
+    min-height: 320px;
+    margin-bottom: 2px;
+}
+
+.table-rtl, .table-cell-sm, .table-cell-lg {
+    direction: rtl;
+}
+
+.table-cell-sm {
+    text-align: right;
+    width: 15%;
+}
+
+.table-cell-lg {
+    text-align: right;
+    width: 70%;
+}
+
+.table-cell-xl {
+    text-align: right;
+    width: 90%;
+}
+
+table input {
+    width: 100%;
+    border: none;
+}
+
+textarea {
+    min-height: 330px;
+    direction: rtl;
+    resize: both;
+}
+
+.display-none {
+    display:none;
+}
+
+.templates {
+    display:none;
+    margin:0;
+    padding:0;
+}
