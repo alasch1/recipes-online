@@ -465,7 +465,7 @@ var alasch;
                         }
                     };
                     // URLS
-                    CookbookServiceProxy._rootPath = 'cookbook';
+                    CookbookServiceProxy._rootPath = '';
                     CookbookServiceProxy._contentPath = 'content';
                     CookbookServiceProxy._recipePath = 'recipe';
                     return CookbookServiceProxy;
@@ -1498,4 +1498,3 @@ $(document).ready(function () {
     appMain.init();
     console.log('document is ready !!');
 });
-//# sourceMappingURL=feAll.js.map

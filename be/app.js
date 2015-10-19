@@ -5,7 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var routes = require('./routes/index');
+var index = require('./routes/index');
 var content = require('./routes/content');
 var recipe = require('./routes/recipe');
 
@@ -24,9 +24,19 @@ app.use(cookieParser());
 //app.use(express.static(path.join(__dirname, 'public')));
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
+app.use('/', index);
+app.use('/cookbook', index);
 app.use('/content', content);
 app.use('/recipe', recipe);
+
+/** Examples of loacl data, visible for each ejs
+app.locals.cuisines = [
+  {name:'pizza'},
+  {name:'indian'}
+];
+
+app.locals.cookbookData = require('./cookbookMock.json');
+**/
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

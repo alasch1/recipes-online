@@ -1,0 +1,109 @@
+<div class="templates">
+
+    <div class="cuisine-template cuisine-container">
+        <div class="cuisine-inner-box col-xs-12 well-color">
+            <h3 class="cuisine-js">&nbsp;</h3>
+            <div class="recipes-index recipes-tab-js">
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <table>
+            <tr class="recipe-row-template input-md recipe-row-js">
+                <td >
+                    <span class="glyphicon glyphicon-book"></span>
+                    <span class="recipe-ref-js" data-l10n-id="ln10-empty-cuisine">&nbsp;></span>
+                    <!--<a class="recipe-ref-js" href="javascript:void(0)" data-l10n-id="ln10-empty-cuisine">&nbsp;</a>-->
+                </td>
+                <td class="display-none toggable-buttons-js">
+                    <button type="button" class="edit-btn-js btn btn-xs"><span class="glyphicon glyphicon-edit"></span></button>
+                    <button type="button" class="delete-btn-js btn btn-xs"><span class="glyphicon glyphicon-remove"></span></button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div>
+        <datalist id="cuisines-datalist" class="input-md">
+            <select name="cuisines">
+            </select>
+        </datalist>
+    </div>
+
+    <div class="recipe-view-template input-md">
+        <!--<h3 class="recipe-view-heading text-muted"></h3>-->
+        <div>
+            <label class="recipe-label" for="recipe-cuisine" data-l10n-id="ln10-recipe-type"></label>
+            <span id="recipe-cuisine"></span>
+        </div>
+
+        <div>
+            <div>
+                <label class="recipe-label recipe-ingreds-table-label-js" data-l10n-id="ln10-recipe-ingreds"></label>
+            </div>
+            <div>
+                <table class="recipe-ingreds-table-js">
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div>
+            <div>
+                <label class="recipe-label" for="recipe-method" data-l10n-id="ln10-recipe-method"></label>
+            </div>
+            <div>
+                <!--<textarea readonly id="recipe-method" rows="10" class="well-color"></textarea>-->
+                <blockquote id="recipe-method" rows="10" class="blockquote-reverse input-md"></blockquote>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <table>
+            <tr class="ingred-row-template">
+                <td><span>&#x2668;</span></td><td><span>&nbsp;</span></td><td class="ingred-data table-rtl"></td>
+            </tr>
+        </table>
+    </div>
+
+    <div>
+        <table>
+            <tr class="input-ingred-row-template">
+                <td><input name="ingred-name"></td>
+                <td><input type="number" name="ingred-qty" min="0" step="any" placeholder="0"></td>
+                <td><input name="ingred-units"></td>
+            </tr>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Operation result modal dialog template -->
+    <div class="modal fade result-modal-js" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">&nbsp;</h4>
+                </div>
+                <div class="modal-body">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Operation messages-->
+    <div>
+        <h4 class="modal-title modal-title-update-ok-js text-success" data-l10n-id="ln10-recipe-updated-ok">&nbsp;</h4>
+        <h4 class="modal-title modal-title-create-ok-js text-success" data-l10n-id="ln10-recipe-created-ok">&nbsp;</h4>
+        <h4 class="modal-title modal-title-delete-ok-js text-success" data-l10n-id="ln10-recipe-deleted-ok">&nbsp;</h4>
+        <h4 class="modal-title modal-title-update-failed-js text-danger" data-l10n-id="ln10-recipe-update-failed">&nbsp;</h4>
+        <h4 class="modal-title modal-title-create-failed-js text-danger" data-l10n-id="ln10-recipe-create-failed">&nbsp;</h4>
+        <h4 class="modal-title modal-title-delete-failed-js text-danger" data-l10n-id="ln10-recipe-delete-failed">&nbsp;</h4>
+    </div>
+
+</div> <!-- templates -->
+

@@ -12,7 +12,7 @@ module alasch.cookbook.ui.http {
     export class CookbookServiceProxy {
 
         // URLS
-        static _rootPath: string ='cookbook';
+        static _rootPath: string ='';
         static _contentPath: string = 'content';
         static _recipePath: string = 'recipe';
 
