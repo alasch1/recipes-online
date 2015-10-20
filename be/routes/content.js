@@ -19,11 +19,11 @@ var getCookbookContent = function (req, res) {
     var content = cookbookHandler.getContent();
     if (content) {
         var contentJson = JSON.stringify(content);
-        //logger.info("received cookbook content");
+        logger.info("received cookbook content");
         res.end(contentJson);
     }
     else {
-        //logger.error('failed to read cookbook content');
+        logger.error('failed to read cookbook content');
         res.sendStatus(404);
     }
 }

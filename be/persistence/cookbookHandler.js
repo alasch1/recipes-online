@@ -2,18 +2,15 @@
  * Created by aschneider on 10/19/2015.
  */
 
-// temporary
-var cookbookData = require('../mocks/cookbookMock.json');
+var logger = require('../utils/logger');
 
-var logger = {
-    debug:function() {},
-    info:function() {}
-};
+// temporary
+var cookbooks = require('../mocks/cookbookMock');
 
 function CookbookHandler() {
 
     // temporary
-    this.cookbook = cookbookData;
+    this.cookbook = cookbooks[0];
 
     this.getContent = function() {
         var content = this.cookbook.cuisines;

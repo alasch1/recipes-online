@@ -35,7 +35,7 @@ app.locals.cuisines = [
   {name:'indian'}
 ];
 
-app.locals.cookbookData = require('./cookbookMock.json');
+app.locals.cookbookData = require('./cookbookData.json');
 **/
 
 // catch 404 and forward to error handler
