@@ -5,7 +5,8 @@
 'use strict';
 
 var uuid = require('node-uuid');
-var logger = require('../../utils/logger')(module);
+var logfactory = require('../../utils/logger')(module);
+var logger = logfactory.createLogger();
 
 function Ingredient(name, qty, units) {
     this.name = name;

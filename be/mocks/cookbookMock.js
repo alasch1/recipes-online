@@ -4,8 +4,11 @@
 
 var dto = require('../persistence/model/DTO');
 var cookbooksData = require('../mocks/cookbookData.json');
+var logfactory = require('../utils/logger')(module);
+var logger = logfactory.createLogger();
 
-console.log("Loaded mockdata:", JSON.stringify(cookbooksData));
+//console.log("Loaded cookbooksData:", JSON.stringify(cookbooksData));
+logger.info("Loaded cookbooksData");
 
 function CookbookMock() {
 
@@ -18,11 +21,13 @@ function CookbookMock() {
 
     this.populate = function() {
         cookbooksData.forEach(this.createCookbook.bind(this));
+        //console.log("Populated cookbooks:", JSON.stringify(this.cookbooks));
     }
 
 }
 
 var mocks = new CookbookMock();
 mocks.populate();
-console.log('hi');
+logger.info("mock was populated");
+
 module.exports = mocks.cookbooks;

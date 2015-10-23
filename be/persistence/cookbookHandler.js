@@ -2,7 +2,9 @@
  * Created by aschneider on 10/19/2015.
  */
 
-var logger = require('../utils/logger');
+var logfactory = require('../utils/logger')(module);
+var logger = logfactory.createLogger();
+var util = require('util');
 
 // temporary
 var cookbooks = require('../mocks/cookbookMock');
@@ -13,10 +15,11 @@ function CookbookHandler() {
     this.cookbook = cookbooks[0];
 
     this.getContent = function() {
-        var content = this.cookbook.cuisines;
-        logger.debug("content:" , JSON.stringify(content));
-        return content;
-    };
+        //var content = this.cookbook.cuisines;
+        //var ccc = "dummy";
+        //logger.debug("content:" , JSON.stringify(ccc));
+        return this.cookbook.cuisines;
+    }
 
     this.getRecipe = function(recipeId) {
         logger.debug("received %s", recipeId);
@@ -64,3 +67,10 @@ function CookbookHandler() {
 var handler = new CookbookHandler();
 
 module.exports = handler;
+
+var test = function() {
+    var content = handler.getContent();
+    console.log('>>>>>> Here is a content', JSON.stringify(content));
+}
+
+test();

@@ -7,7 +7,10 @@
 var app = require('../app');
 var debug = require('debug')('recipes-online:server');
 var http = require('http');
+var logfactory = require('../utils/logger')(module);
+var logger = logfactory.createLogger();
 
+logStart();
 /**
  * Get port from environment and store in Express.
  */
@@ -86,5 +89,16 @@ function onListening() {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
+  console.log('Listening on ' + bind);
   debug('Listening on ' + bind);
+}
+
+
+function logStart() {
+  var separator = "======================================";
+  logger.info(separator);
+  logger.info(separator);
+  logger.info('Cookbook server started')
+  logger.info(separator);
+  logger.info(separator);
 }
