@@ -3,8 +3,18 @@
  */
 var winston = require('winston');
 //var getModule = require('./getModule');
+var fs = require('fs');
+var logDir = process.cwd() + '/../logs';
+env = process.env.NODE_ENV || 'development';
+//var logger;
 
 winston.emitErrs = true;
+winston.setLevels(winston.config.npm.levels);
+winston.addColors(winston.config.npm.colors);
+
+if (!fs.existsSync(logDir) ) {
+    fs.mkdirSync(logDir);
+}
 
 var getModule = function(callingModule) {
     // Returns the last folder name in the path and the calling
@@ -19,17 +29,17 @@ var logFactory = function(callingModule) {
 
     createTransports = function() {
         var transports = [
-            new (winston.transports.DailyRotateFile)({
-                level: 'debug',
+            new (winston.transports.File)({
+                level: env=== 'development' ? 'debug' : 'info',
                 prettyPrint: true,
-                filename: '../logs/cookbook.log',
-                datePattern: '.dd-MM-yyyy',
+                filename: logDir + '/beLogs.log',
                 timestamp: true,
                 handleExceptions: true,
                 json: false,
+                maxsize: 1024 *1024 * 10 //  10MB
             }),
             new winston.transports.Console({
-                level: 'debug',
+                level: env=== 'development' ? 'debug' : 'info',
                 prettyPrint: true,
                 colorize: true,
                 json: false,
@@ -41,14 +51,22 @@ var logFactory = function(callingModule) {
         return transports;
     }
 
+    createExceptionHandlers = function() {
+        return [
+            new winston.transports.File({
+                prettyPrint: true,
+                json: false,
+                timestamp: true,
+                filename: logDir + '/exceptions.log'
+            })
+        ]
+    }
+
     createLogger = function() {
         var logger = new (winston.Logger) ({
             transports: this.createTransports(),
+            exceptionHandlers: this.createExceptionHandlers(),
             exitOnError: false,
-            colors: {
-                debug: 'green',
-                info: 'blue',
-                error: 'red'    }
         });
         logger.stream = {
             write: function (message, encoding) {

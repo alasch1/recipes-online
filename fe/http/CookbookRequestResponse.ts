@@ -49,7 +49,7 @@ module alasch.cookbook.ui.http {
         }
 
         toString(): string {
-            return('[' + this._httpMethod.toString() +
+            return('[' + this._httpMethod +
                 ', path:' + this.getRoute() +
                 ', data:' + JSON.stringify(this._data) +']');
         }

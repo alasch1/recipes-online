@@ -30,4 +30,8 @@ var mocks = new CookbookMock();
 mocks.populate();
 logger.info("mock was populated");
 
+(function test() {
+    var cookbook = mocks.cookbooks[0];
+    console.log(JSON.stringify(cookbook));
+})();
 module.exports = mocks.cookbooks;

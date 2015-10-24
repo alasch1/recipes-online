@@ -22,6 +22,7 @@
           {
             "id": "re-1",
             "name": "חביתה",
+            "cuisine": "ישראלי",
             "ingredients": [
               {
                 "name": "eggs",
@@ -38,6 +39,7 @@
           {
             "id": "re-2",
             "name": "recipe-100",
+            "cuisine": "כללי",
             "ingredients": [
               {
                 "name": "eggs",
@@ -54,6 +56,7 @@
           {
             "id": "re-3",
             "name": "recipe-101",
+            "cuisine": "כללי",
             "ingredients": [
               {
                 "name": "potato",
@@ -70,6 +73,7 @@
           {
             "id": "re-4",
             "name": "פשתידת בצל",
+            "cuisine": "כללי",
             "ingredients": [
               {
                 "name": "ביצים",

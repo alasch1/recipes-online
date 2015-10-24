@@ -11,10 +11,10 @@
 module alasch.cookbook.ui.views {
 
     var logger:alasch.cookbook.ui.utils.Logger = alasch.cookbook.ui.utils.LoggerFactory.getLogger('EditRecipeWidget');
-    var utils = alasch.cookbook.ui.utils;
+    //var utils = alasch.cookbook.ui.utils;
     var idSelector = utils.Helpers.idSelector;
     var classSelector = utils.Helpers.classSelector;
-    var model = alasch.cookbook.ui.model;
+    //var model = alasch.cookbook.ui.model;
     var http = alasch.cookbook.ui.http;
 
     var ADD_EDIT_SECTION_ID = 'add-edit-recipe-section-id';
@@ -37,7 +37,7 @@ module alasch.cookbook.ui.views {
 
         _ingredTable: JQuery;
         _ingredTableBody: JQuery;
-        _ingredRowsGrid: utils.Grid<model.IngredientDTO>;
+        _ingredRowsGrid: alasch.cookbook.ui.utils.Grid<model.IngredientDTO>;
 
         constructor() {
             this._ingredTable = $(idSelector(RECIPE_INGREDS_INPUT_ID));
@@ -56,7 +56,7 @@ module alasch.cookbook.ui.views {
             this.createEmptyRows(3);
         }
 
-        bindIngredients(recipe: model.RecipeDTO) : void {
+        bindIngredients(recipe: alasch.cookbook.ui.model.RecipeDTO) : void {
             var ingredients = recipe.ingredients;
             if (ingredients && ingredients.length > 0) {
                 for (var i=0; i<ingredients.length; i++) {
@@ -65,7 +65,7 @@ module alasch.cookbook.ui.views {
             }
         }
 
-        bindIngredRow(tr: JQuery, ingredient?: model.IngredientDTO): void {
+        bindIngredRow(tr: JQuery, ingredient?: alasch.cookbook.ui.model.IngredientDTO): void {
             tr.removeClass(INGRED_ROW_TEMPLATE_CLASS);
             if (ingredient) {
                 tr.find('[name="ingred-name"]').val(ingredient.name);
@@ -74,11 +74,11 @@ module alasch.cookbook.ui.views {
             }
         }
 
-        readIngredientsInput(recipe: model.RecipeDTO): void {
+        readIngredientsInput(recipe: alasch.cookbook.ui.model.RecipeDTO): void {
             recipe.ingredients=[];
             var readIngredientRow = function(index:number, trElement:HTMLElement) {
                 var tr = $(trElement);
-                var ingredient: model.IngredientDTO = new model.IngredientDTO();
+                var ingredient: alasch.cookbook.ui.model.IngredientDTO = new model.IngredientDTO();
                 ingredient.name = tr.find('[name="ingred-name"]').val();
                 if (ingredient.name !== '') {
                     var qty = tr.find('[name="ingred-qty"]').val();
@@ -115,15 +115,15 @@ module alasch.cookbook.ui.views {
         private _saveBtn: JQuery;
         private _clearBtn: JQuery;
         private _addIngredRowsBtn: JQuery;
-        private _recipe: model.RecipeDTO;
+        private _recipe: alasch.cookbook.ui.model.RecipeDTO;
         private _ingredTableHandler: IngredTableHandler;
         private _emptyNameError: JQuery;// = $('#recipe-name-input-id').siblings('.help-block');
 
-        static editRecipe(recipe:model.RecipeDTO): void {
+        static editRecipe(recipe: alasch.cookbook.ui.model.RecipeDTO): void {
             EditRecipeWidget.singleton.showRecipe(recipe);
         }
 
-        constructor(appEventListener: AppEventListener, cbkServiceProxy: http.CookbookServiceProxy) {
+        constructor(appEventListener: AppEventListener, cbkServiceProxy: alasch.cookbook.ui.http.CookbookServiceProxy) {
             super(utils.Helpers.idSelector(RECIPE_FORM_ID), appEventListener,  cbkServiceProxy);
             this._section = $(idSelector(ADD_EDIT_SECTION_ID));
             this._addRecipeSubtitle = $(classSelector(ADD_RECIPE_SUBTITLE_CLASS));
@@ -151,7 +151,7 @@ module alasch.cookbook.ui.views {
             this._section.on('focus', this.onFocus.bind(this));
         }
 
-        showRecipe(recipe:model.RecipeDTO) {
+        showRecipe(recipe: alasch.cookbook.ui.model.RecipeDTO) {
             this._recipe = recipe;
             //this.clearData(false);
             //this.bindEditRecipeData();
@@ -177,7 +177,7 @@ module alasch.cookbook.ui.views {
         }
 
         private onClickSaveButton(): void {
-            var recipe:model.RecipeDTO;
+            var recipe: alasch.cookbook.ui.model.RecipeDTO;
             if (this._recipe) {
                 recipe = this._recipe;
             }
@@ -206,7 +206,7 @@ module alasch.cookbook.ui.views {
             }
         }
 
-        private isValidInput(recipe: model.RecipeDTO) : boolean {
+        private isValidInput(recipe: alasch.cookbook.ui.model.RecipeDTO) : boolean {
             if (recipe.name.length==0) {
                 logger.error("Invalid recipe data: name is empty");
                 this._recipeNameInput.parent('.form-group').addClass('has-error');

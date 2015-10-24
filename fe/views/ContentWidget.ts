@@ -29,7 +29,7 @@ module alasch.cookbook.ui.views {
     var EDIT_RECIPE_BTN_SELECTOR = '.edit-btn-js';
     var DELETE_RECIPE_BTN_SELECTOR = '.delete-btn-js';
 
-    class CuisineGrid extends utils.Grid<model.RecipeDTO>{
+    class CuisineGrid extends alasch.cookbook.ui.utils.Grid<model.RecipeDTO>{
         _name ; string;
 
         constructor(name: string, container: JQuery) {
@@ -96,11 +96,11 @@ module alasch.cookbook.ui.views {
             return clickedElement.parents(RECIPE_ROW_SELECTOR).find(RECIPE_ITEM_SELECTOR);
         }
 
-        private static extractRecipeData(jqElement: JQuery) : model.RecipeDTO {
+        private static extractRecipeData(jqElement: JQuery) : alasch.cookbook.ui.model.RecipeDTO {
             if (jqElement) {
                 var data:any = jqElement.prop(RECIPE_DATA_PROPERTY);
                 if (data) {
-                    return <model.RecipeDTO>data;
+                    return <alasch.cookbook.ui.model.RecipeDTO>data;
                 }
             }
             else return null;
@@ -111,16 +111,16 @@ module alasch.cookbook.ui.views {
 
         _cuisinesList: JQuery;
         _contentTable: JQuery;
-        _cuisinesListGrid: utils.Grid<model.CuisineDTO>;
-        _contentGrid: utils.Grid<model.CuisineDTO>;
+        _cuisinesListGrid: alasch.cookbook.ui.utils.Grid<model.CuisineDTO>;
+        _contentGrid: alasch.cookbook.ui.utils.Grid<model.CuisineDTO>;
         _cuisineContentGrids: Array<CuisineGrid>;
 
-        constructor(cbkServiceProxy: http.CookbookServiceProxy) {
+        constructor(cbkServiceProxy: alasch.cookbook.ui.http.CookbookServiceProxy) {
             super(CONTENT_TABLE_SELECTOR, null, cbkServiceProxy);
             this._cuisinesList = $(CUISINE_LIST_SELECTOR);
             this._contentTable = $(CONTENT_TABLE_SELECTOR);
-            this._cuisinesListGrid =  new utils.Grid<model.CuisineDTO>(DATALIST_OPTION_SELECTOR, this._cuisinesList);
-            this._contentGrid = new utils.Grid<model.CuisineDTO>(CUISINE_CONTENT_TEMPLATE_SELECTOR, this._contentTable);
+            this._cuisinesListGrid =  new alasch.cookbook.ui.utils.Grid<model.CuisineDTO>(DATALIST_OPTION_SELECTOR, this._cuisinesList);
+            this._contentGrid = new alasch.cookbook.ui.utils.Grid<model.CuisineDTO>(CUISINE_CONTENT_TEMPLATE_SELECTOR, this._contentTable);
             this._cuisineContentGrids = new Array<CuisineGrid>();
             RecipeClickHandler._contentWidget = this;
             this._element.on('click',RECIPE_ITEM_SELECTOR, RecipeClickHandler.onRecipeClick);
@@ -148,7 +148,7 @@ module alasch.cookbook.ui.views {
             this._cbkServiceProxy.getCookbookContent(this.onReadContentSuccess.bind(this), this.onReadContentError.bind(this));
         }
 
-        onReadContentSuccess(contentData: model.CuisineDTO[]) {
+        onReadContentSuccess(contentData: alasch.cookbook.ui.model.CuisineDTO[]) {
             logger.info("Recieved content:" + JSON.stringify(contentData));
             this.clearContent();
             this.initCuisineList(contentData);
@@ -159,7 +159,7 @@ module alasch.cookbook.ui.views {
             logger.error("Error on get content:" + errorCode);
         }
 
-        deleteRecipe(recipe: model.RecipeDTO) {
+        deleteRecipe(recipe: alasch.cookbook.ui.model.RecipeDTO) {
             this._cbkServiceProxy.deleteRecipe(
                 recipe.id,
                 this.onDeleteSuccess.bind(this),
@@ -172,8 +172,8 @@ module alasch.cookbook.ui.views {
             this._cuisineContentGrids = [];
         }
 
-        private initCuisineList(contentData: model.CuisineDTO[]): void {
-            var appendOption = function(optionElement: JQuery, data:model.CuisineDTO) {
+        private initCuisineList(contentData: alasch.cookbook.ui.model.CuisineDTO[]): void {
+            var appendOption = function(optionElement: JQuery, data:alasch.cookbook.ui.model.CuisineDTO) {
                 optionElement.attr("value", data.name);
             };
 
@@ -191,13 +191,13 @@ module alasch.cookbook.ui.views {
             }.bind(this));
         }
 
-        private appendCuisineContent(cuisineElement:JQuery, data:model.CuisineDTO) : void {
+        private appendCuisineContent(cuisineElement:JQuery, data:alasch.cookbook.ui.model.CuisineDTO) : void {
             cuisineElement.removeClass("cuisine-template");
             var header = cuisineElement.find(".cuisine-js");
             header.text(data.name);
         }
 
-        private appendRecipes(cuisineElement: JQuery, data: model.CuisineDTO) {
+        private appendRecipes(cuisineElement: JQuery, data: alasch.cookbook.ui.model.CuisineDTO) {
             // Create cuisine content with recipes
             var recipesTableElement = cuisineElement.find(RECIPE_CONTAINER_SELECTOR);
             var cuisineGrid = new CuisineGrid(data.name, recipesTableElement);
@@ -215,7 +215,7 @@ module alasch.cookbook.ui.views {
             this._cuisineContentGrids.push(cuisineGrid);
         }
 
-        private appendRecipe (recipeListElement: JQuery, data?: model.RecipeDTO): void {
+        private appendRecipe (recipeListElement: JQuery, data?: alasch.cookbook.ui.model.RecipeDTO): void {
             var recipeRef = recipeListElement.find('.recipe-ref-js');
             var editBtn = recipeListElement.find('.edit-btn-js');
             var deleteBtn = recipeListElement.find('.delete-btn-js');
