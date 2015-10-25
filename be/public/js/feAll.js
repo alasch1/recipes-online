@@ -193,7 +193,7 @@ var alasch;
                         }
                     };
                     CookbookRequest.prototype.toString = function () {
-                        return ('[' + this._httpMethod.toString() + ', path:' + this.getRoute() + ', data:' + JSON.stringify(this._data) + ']');
+                        return ('[' + this._httpMethod + ', path:' + this.getRoute() + ', data:' + JSON.stringify(this._data) + ']');
                     };
                     return CookbookRequest;
                 })();
@@ -1000,10 +1000,10 @@ var alasch;
             var views;
             (function (views) {
                 var logger = alasch.cookbook.ui.utils.LoggerFactory.getLogger('EditRecipeWidget');
-                var utils = alasch.cookbook.ui.utils;
-                var idSelector = utils.Helpers.idSelector;
-                var classSelector = utils.Helpers.classSelector;
-                var model = alasch.cookbook.ui.model;
+                //var utils = alasch.cookbook.ui.utils;
+                var idSelector = ui.utils.Helpers.idSelector;
+                var classSelector = ui.utils.Helpers.classSelector;
+                //var model = alasch.cookbook.ui.model;
                 var http = alasch.cookbook.ui.http;
                 var ADD_EDIT_SECTION_ID = 'add-edit-recipe-section-id';
                 var ADD_RECIPE_SUBTITLE_CLASS = 'create-operation-js';
@@ -1024,7 +1024,7 @@ var alasch;
                     function IngredTableHandler() {
                         this._ingredTable = $(idSelector(RECIPE_INGREDS_INPUT_ID));
                         this._ingredTableBody = this._ingredTable.children('tbody');
-                        this._ingredRowsGrid = new utils.Grid(classSelector(INGRED_ROW_TEMPLATE_CLASS), this._ingredTable);
+                        this._ingredRowsGrid = new ui.utils.Grid(classSelector(INGRED_ROW_TEMPLATE_CLASS), this._ingredTable);
                     }
                     IngredTableHandler.prototype.createEmptyRows = function (rowsNumber) {
                         for (var i = 0; i < rowsNumber; i++) {
@@ -1054,7 +1054,7 @@ var alasch;
                         recipe.ingredients = [];
                         var readIngredientRow = function (index, trElement) {
                             var tr = $(trElement);
-                            var ingredient = new model.IngredientDTO();
+                            var ingredient = new ui.model.IngredientDTO();
                             ingredient.name = tr.find('[name="ingred-name"]').val();
                             if (ingredient.name !== '') {
                                 var qty = tr.find('[name="ingred-qty"]').val();
@@ -1077,7 +1077,7 @@ var alasch;
                 var EditRecipeWidget = (function (_super) {
                     __extends(EditRecipeWidget, _super);
                     function EditRecipeWidget(appEventListener, cbkServiceProxy) {
-                        _super.call(this, utils.Helpers.idSelector(RECIPE_FORM_ID), appEventListener, cbkServiceProxy);
+                        _super.call(this, ui.utils.Helpers.idSelector(RECIPE_FORM_ID), appEventListener, cbkServiceProxy);
                         this._section = $(idSelector(ADD_EDIT_SECTION_ID));
                         this._addRecipeSubtitle = $(classSelector(ADD_RECIPE_SUBTITLE_CLASS));
                         this._editRecipeSubtitle = $(classSelector(EDIT_RECIPE_SUBTITLE_CLASS));
@@ -1100,7 +1100,7 @@ var alasch;
                         this._clearBtn.click(this.onClickClearButton.bind(this));
                         this._addIngredRowsBtn.click(this._ingredTableHandler.createRowsChunk.bind(this._ingredTableHandler));
                         this._ingredTableHandler.createEmptyRows(10);
-                        this._recipe = new model.RecipeDTO();
+                        this._recipe = new ui.model.RecipeDTO();
                         this._editRecipeSubtitle.hide();
                         this._addRecipeSubtitle.hide();
                         this._section.on('focus', this.onFocus.bind(this));
@@ -1132,7 +1132,7 @@ var alasch;
                             recipe = this._recipe;
                         }
                         else {
-                            recipe = new model.RecipeDTO();
+                            recipe = new ui.model.RecipeDTO();
                         }
                         recipe.name = this._recipeNameInput.val();
                         recipe.cuisine = this._recipeCuisineInput.val();
@@ -1183,6 +1183,7 @@ var alasch;
                         views.ModalDialogsHandler.showOperationResult(operationResultId);
                     };
                     EditRecipeWidget.prototype.clearData = function (noRecipe) {
+                        logger.debug("Entred clearData noRecipe=" + noRecipe);
                         this._ingredTableHandler.clearTable();
                         this._recipeNameInput.val('');
                         this._recipeNameInput.parent('.form-group').removeClass('has-error');
@@ -1254,7 +1255,7 @@ var alasch;
                         this._name = name;
                     }
                     return CuisineGrid;
-                })(utils.Grid);
+                })(alasch.cookbook.ui.utils.Grid);
                 // Encapsulates all hover handling over recipes items in content table
                 // Is waked-up upon mouse moved over recipe name
                 var RecipeHoverHandler = (function () {
@@ -1324,8 +1325,8 @@ var alasch;
                         _super.call(this, CONTENT_TABLE_SELECTOR, null, cbkServiceProxy);
                         this._cuisinesList = $(CUISINE_LIST_SELECTOR);
                         this._contentTable = $(CONTENT_TABLE_SELECTOR);
-                        this._cuisinesListGrid = new utils.Grid(DATALIST_OPTION_SELECTOR, this._cuisinesList);
-                        this._contentGrid = new utils.Grid(CUISINE_CONTENT_TEMPLATE_SELECTOR, this._contentTable);
+                        this._cuisinesListGrid = new alasch.cookbook.ui.utils.Grid(DATALIST_OPTION_SELECTOR, this._cuisinesList);
+                        this._contentGrid = new alasch.cookbook.ui.utils.Grid(CUISINE_CONTENT_TEMPLATE_SELECTOR, this._contentTable);
                         this._cuisineContentGrids = new Array();
                         RecipeClickHandler._contentWidget = this;
                         this._element.on('click', RECIPE_ITEM_SELECTOR, RecipeClickHandler.onRecipeClick);
@@ -1469,15 +1470,18 @@ var alasch;
                     this._traceConsole = new ui.utils.TraceConsole();
                     this._viewRecipesWidget = ui.views.ViewRecipeWidget.getInstance();
                     this.createEditRecipeWidget();
-                    this._navBar = $(ui.utils.Helpers.idSelector('li-add-recipe-id'));
-                    this._navBar.on('click', this.onClick.bind(this));
                 }
                 AppClientMain.prototype.init = function () {
                     this._cbkServiceProxy.init();
+                    this.initJQueryElements();
+                    logger.info("Initialized OK");
+                };
+                AppClientMain.prototype.initJQueryElements = function () {
                     this._contentWidget.readContent();
                     this._editRecipeWidget.init();
                     this._traceConsole.hide();
-                    logger.info("Initialized OK");
+                    this._navBar = $(ui.utils.Helpers.idSelector('li-add-recipe-id'));
+                    this._navBar.on('click', this.onClick.bind(this));
                 };
                 AppClientMain.prototype.createEditRecipeWidget = function () {
                     var appEventListener = new ui.views.AppEventListener();

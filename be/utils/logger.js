@@ -4,7 +4,7 @@
 var winston = require('winston');
 //var getModule = require('./getModule');
 var fs = require('fs');
-var logDir = process.cwd() + '/../logs';
+var logDir = process.cwd() + '/logs';
 env = process.env.NODE_ENV || 'development';
 //var logger;
 

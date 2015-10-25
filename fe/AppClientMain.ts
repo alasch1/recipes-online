@@ -32,16 +32,20 @@ module alasch.cookbook.ui {
             this._traceConsole = new utils.TraceConsole();
             this._viewRecipesWidget = views.ViewRecipeWidget.getInstance();
             this.createEditRecipeWidget();
-            this._navBar = $(utils.Helpers.idSelector('li-add-recipe-id'));
-            this._navBar.on('click', this.onClick.bind(this));
         }
 
         init() {
             this._cbkServiceProxy.init();
+            this.initJQueryElements();
+            logger.info("Initialized OK");
+        }
+
+        private initJQueryElements() {
             this._contentWidget.readContent();
             this._editRecipeWidget.init();
             this._traceConsole.hide();
-            logger.info("Initialized OK");
+            this._navBar = $(utils.Helpers.idSelector('li-add-recipe-id'));
+            this._navBar.on('click', this.onClick.bind(this));
         }
 
         private createEditRecipeWidget() {
