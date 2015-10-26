@@ -193,7 +193,7 @@ var alasch;
                         }
                     };
                     CookbookRequest.prototype.toString = function () {
-                        return ('[' + this._httpMethod.toString() + ', path:' + this.getRoute() + ', data:' + JSON.stringify(this._data) + ']');
+                        return ('[' + this._httpMethod + ', path:' + this.getRoute() + ', data:' + JSON.stringify(this._data) + ']');
                     };
                     return CookbookRequest;
                 })();
@@ -878,7 +878,6 @@ var alasch;
 /**
  * Created by aschneider on 10/10/2015.
  */
-/// <reference path="../utils/Grid.ts" />
 /// <reference path="../utils/Helpers.ts" />
 /// <reference path="../definitions/bootstrap.d.ts" />
 var alasch;
@@ -891,11 +890,11 @@ var alasch;
             (function (views) {
                 var logger = alasch.cookbook.ui.utils.LoggerFactory.getLogger('ModalDialogs');
                 var utils = alasch.cookbook.ui.utils;
-                var RESULT_MODAL_TEMPLATE_CLASS = 'result-modal-js';
-                var MODAL_BODY_CLASS = 'modal-body';
-                var OPERATION_RESULT_MODAL_ID = 'modal-result-id';
-                var SUCCESS_ICON_SPAN_SELECTOR = '<span class="glyphicon glyphicon-ok"></span>';
-                var FAILURE_ICON_SPAN_SELECTOR = '<span class="glyphicon glyphicon-remove"></span>';
+                //var RESULT_MODAL_TEMPLATE_CLASS = 'result-modal-js';
+                //var MODAL_BODY_CLASS = 'modal-body';
+                //var OPERATION_RESULT_MODAL_ID = 'modal-result-id';
+                //var SUCCESS_ICON_SPAN_SELECTOR = '<span class="glyphicon glyphicon-ok"></span>';
+                //var FAILURE_ICON_SPAN_SELECTOR = '<span class="glyphicon glyphicon-remove"></span>';
                 (function (OperationResultId) {
                     OperationResultId[OperationResultId["updateOk"] = 0] = "updateOk";
                     OperationResultId[OperationResultId["updateFailed"] = 1] = "updateFailed";
@@ -905,74 +904,125 @@ var alasch;
                     OperationResultId[OperationResultId["deleteFailed"] = 5] = "deleteFailed";
                 })(views.OperationResultId || (views.OperationResultId = {}));
                 var OperationResultId = views.OperationResultId;
-                var OperationResultModal = (function () {
-                    function OperationResultModal() {
-                    }
-                    OperationResultModal.prototype.init = function () {
-                        this._dialog = $(utils.Helpers.classSelector(RESULT_MODAL_TEMPLATE_CLASS)).clone();
-                        this._dialog.removeClass(RESULT_MODAL_TEMPLATE_CLASS);
-                        this._dialog.attr('id', OPERATION_RESULT_MODAL_ID);
-                        this._successIconSpan = $(SUCCESS_ICON_SPAN_SELECTOR);
-                        this._failureIconSpan = $(FAILURE_ICON_SPAN_SELECTOR);
-                        this._dialog.on('hidden.bs.modal', this.cleanDialog.bind(this));
-                    };
-                    OperationResultModal.prototype.show = function (operationResultId) {
-                        switch (operationResultId) {
-                            case 0 /* updateOk */:
-                            case 2 /* createOk */:
-                            case 4 /* deleteOk */:
-                                this.showSuccess(operationResultId);
-                                break;
-                            case 1 /* updateFailed */:
-                            case 3 /* createFailed */:
-                            case 5 /* deleteFailed */:
-                                this.showFailure(operationResultId);
-                                break;
-                        }
-                    };
-                    OperationResultModal.prototype.showSuccess = function (operationResultId) {
-                        this.modalDialog(operationResultId, this._successIconSpan);
-                    };
-                    OperationResultModal.prototype.showFailure = function (operationResultId) {
-                        this.modalDialog(operationResultId, this._failureIconSpan);
-                    };
-                    OperationResultModal.prototype.modalDialog = function (operationResultId, icon) {
-                        var dlgMessageSelector = this.getMessageSelector(operationResultId);
-                        if (this._dialog) {
-                            var dialogBody = $(utils.Helpers.classSelector(MODAL_BODY_CLASS), this._dialog);
-                            var dialogContent = $(utils.Helpers.classSelector(dlgMessageSelector)).clone();
-                            dialogContent.append(icon);
-                            dialogBody.append(dialogContent);
-                            this._dialog.modal('show');
-                        }
-                    };
-                    OperationResultModal.prototype.cleanDialog = function () {
-                        var dialogBody = $(utils.Helpers.classSelector(MODAL_BODY_CLASS), this._dialog);
-                        dialogBody.empty();
-                    };
-                    OperationResultModal.prototype.getMessageSelector = function (operationResultId) {
-                        switch (operationResultId) {
-                            case 0 /* updateOk */: return 'modal-title-update-ok-js';
-                            case 1 /* updateFailed */: return 'modal-title-update-failed-js';
-                            case 2 /* createOk */: return 'modal-title-create-ok-js';
-                            case 3 /* createFailed */: return 'modal-title-create-failed-js';
-                            case 4 /* deleteOk */: return 'modal-title-delete-ok-js';
-                            case 5 /* deleteFailed */: return 'modal-title-delete-failed-js';
-                        }
-                    };
-                    return OperationResultModal;
+                var dlgSelectors = {};
+                var msgSelectors = {};
+                (function initSelectors() {
+                    // init dialogs ids
+                    dlgSelectors[0 /* updateOk */] = 'update-ok-dlg';
+                    dlgSelectors[1 /* updateFailed */] = 'update-err-dlg';
+                    dlgSelectors[2 /* createOk */] = 'create-ok-dlg';
+                    dlgSelectors[3 /* createFailed */] = 'create-err-dlg';
+                    dlgSelectors[4 /* deleteOk */] = 'delete-ok-dlg';
+                    dlgSelectors[5 /* deleteFailed */] = 'delete-err-dlg';
+                    // init messages ids
+                    msgSelectors[0 /* updateOk */] = 'modal-title-update-ok-js';
+                    msgSelectors[1 /* updateFailed */] = 'modal-title-update-failed-js';
+                    msgSelectors[2 /* createOk */] = 'modal-title-create-ok-js';
+                    msgSelectors[3 /* createFailed */] = 'modal-title-create-failed-js';
+                    msgSelectors[4 /* deleteOk */] = 'modal-title-delete-ok-js';
+                    msgSelectors[5 /* deleteFailed */] = 'modal-title-delete-failed-js';
                 })();
+                var OperationResultModals = (function () {
+                    function OperationResultModals() {
+                        this._dialogs = {};
+                    }
+                    OperationResultModals.prototype.init = function () {
+                        for (var opId in OperationResultId) {
+                            var dlgId = dlgSelectors[opId];
+                            var dlg = $(utils.Helpers.idSelector(dlgSelectors[opId])).clone();
+                            var dlgTitle = $('.modal-title', dlg);
+                            var dlgSpan = $('span', dlg).clone();
+                            var titleMsg = $(utils.Helpers.classSelector(msgSelectors[opId])).text();
+                            dlgTitle.text(titleMsg);
+                            dlgTitle.append(dlgSpan);
+                            this._dialogs[opId] = dlg;
+                        }
+                    };
+                    OperationResultModals.prototype.show = function (operationResultId) {
+                        var dlg = this._dialogs[operationResultId];
+                        dlg.modal('show');
+                    };
+                    return OperationResultModals;
+                })();
+                //class OperationResultModal {
+                //    _dialog: JQuery;
+                //    _successIconSpan:JQuery;
+                //    _failureIconSpan: JQuery;
+                //
+                //    constructor() {
+                //    }
+                //
+                //    init() {
+                //        this._dialog = $(utils.Helpers.classSelector(RESULT_MODAL_TEMPLATE_CLASS)).clone();
+                //        this._dialog.removeClass(RESULT_MODAL_TEMPLATE_CLASS);
+                //        this._dialog.attr('id', OPERATION_RESULT_MODAL_ID);
+                //        this._successIconSpan = $(SUCCESS_ICON_SPAN_SELECTOR);
+                //        this._failureIconSpan = $(FAILURE_ICON_SPAN_SELECTOR);
+                //        this._dialog.on('hidden.bs.modal', this.cleanDialog.bind(this));
+                //    }
+                //
+                //    show(operationResultId: OperationResultId) {
+                //        switch (operationResultId) {
+                //            case OperationResultId.updateOk:
+                //            case OperationResultId.createOk:
+                //            case OperationResultId.deleteOk:
+                //                this.showSuccess(operationResultId);
+                //                break;
+                //            case OperationResultId.updateFailed:
+                //            case OperationResultId.createFailed:
+                //            case OperationResultId.deleteFailed:
+                //                this.showFailure(operationResultId);
+                //                break;
+                //        }
+                //    }
+                //
+                //    private showSuccess(operationResultId: OperationResultId) {
+                //        this.modalDialog(operationResultId, this._successIconSpan);
+                //    }
+                //
+                //    private showFailure(operationResultId: OperationResultId) {
+                //        this.modalDialog(operationResultId, this._failureIconSpan);
+                //    }
+                //
+                //    private modalDialog(operationResultId: OperationResultId, icon: JQuery) {
+                //        var dlgMessageSelector:string = this.getMessageSelector(operationResultId);
+                //        if (this._dialog) {
+                //            var dialogBody:JQuery = $(utils.Helpers.classSelector(MODAL_BODY_CLASS), this._dialog);
+                //            var dialogContent:JQuery = $(utils.Helpers.classSelector(dlgMessageSelector)).clone();
+                //            dialogContent.append(icon);
+                //            dialogBody.append(dialogContent);
+                //            this._dialog.modal('show');
+                //        }
+                //    }
+                //
+                //    private cleanDialog() {
+                //        var dialogBody:JQuery = $(utils.Helpers.classSelector(MODAL_BODY_CLASS), this._dialog);
+                //        dialogBody.empty();
+                //    }
+                //
+                //    private getMessageSelector(operationResultId: OperationResultId): string {
+                //        switch (operationResultId) {
+                //            case OperationResultId.updateOk: return 'modal-title-update-ok-js';
+                //            case OperationResultId.updateFailed: return 'modal-title-update-failed-js';
+                //            case OperationResultId.createOk: return 'modal-title-create-ok-js';
+                //            case OperationResultId.createFailed: return 'modal-title-create-failed-js';
+                //            case OperationResultId.deleteOk: return 'modal-title-delete-ok-js';
+                //            case OperationResultId.deleteFailed: return 'modal-title-delete-failed-js';
+                //        }
+                //    }
+                //
+                //}
                 var ModalDialogsHandler = (function () {
                     function ModalDialogsHandler() {
                     }
                     ModalDialogsHandler.showOperationResult = function (operationResultId) {
                         ModalDialogsHandler.init();
-                        ModalDialogsHandler._operationResultDlg.show(operationResultId);
+                        ModalDialogsHandler._operationResultDlgs.show(operationResultId);
                     };
                     ModalDialogsHandler.init = function () {
-                        if (!ModalDialogsHandler._operationResultDlg) {
-                            ModalDialogsHandler._operationResultDlg = new OperationResultModal();
-                            ModalDialogsHandler._operationResultDlg.init();
+                        if (!ModalDialogsHandler._operationResultDlgs) {
+                            ModalDialogsHandler._operationResultDlgs = new OperationResultModals();
+                            ModalDialogsHandler._operationResultDlgs.init();
                         }
                     };
                     return ModalDialogsHandler;
@@ -1000,10 +1050,10 @@ var alasch;
             var views;
             (function (views) {
                 var logger = alasch.cookbook.ui.utils.LoggerFactory.getLogger('EditRecipeWidget');
-                var utils = alasch.cookbook.ui.utils;
-                var idSelector = utils.Helpers.idSelector;
-                var classSelector = utils.Helpers.classSelector;
-                var model = alasch.cookbook.ui.model;
+                //var utils = alasch.cookbook.ui.utils;
+                var idSelector = ui.utils.Helpers.idSelector;
+                var classSelector = ui.utils.Helpers.classSelector;
+                //var model = alasch.cookbook.ui.model;
                 var http = alasch.cookbook.ui.http;
                 var ADD_EDIT_SECTION_ID = 'add-edit-recipe-section-id';
                 var ADD_RECIPE_SUBTITLE_CLASS = 'create-operation-js';
@@ -1024,7 +1074,7 @@ var alasch;
                     function IngredTableHandler() {
                         this._ingredTable = $(idSelector(RECIPE_INGREDS_INPUT_ID));
                         this._ingredTableBody = this._ingredTable.children('tbody');
-                        this._ingredRowsGrid = new utils.Grid(classSelector(INGRED_ROW_TEMPLATE_CLASS), this._ingredTable);
+                        this._ingredRowsGrid = new ui.utils.Grid(classSelector(INGRED_ROW_TEMPLATE_CLASS), this._ingredTable);
                     }
                     IngredTableHandler.prototype.createEmptyRows = function (rowsNumber) {
                         for (var i = 0; i < rowsNumber; i++) {
@@ -1054,7 +1104,7 @@ var alasch;
                         recipe.ingredients = [];
                         var readIngredientRow = function (index, trElement) {
                             var tr = $(trElement);
-                            var ingredient = new model.IngredientDTO();
+                            var ingredient = new ui.model.IngredientDTO();
                             ingredient.name = tr.find('[name="ingred-name"]').val();
                             if (ingredient.name !== '') {
                                 var qty = tr.find('[name="ingred-qty"]').val();
@@ -1077,7 +1127,7 @@ var alasch;
                 var EditRecipeWidget = (function (_super) {
                     __extends(EditRecipeWidget, _super);
                     function EditRecipeWidget(appEventListener, cbkServiceProxy) {
-                        _super.call(this, utils.Helpers.idSelector(RECIPE_FORM_ID), appEventListener, cbkServiceProxy);
+                        _super.call(this, ui.utils.Helpers.idSelector(RECIPE_FORM_ID), appEventListener, cbkServiceProxy);
                         this._section = $(idSelector(ADD_EDIT_SECTION_ID));
                         this._addRecipeSubtitle = $(classSelector(ADD_RECIPE_SUBTITLE_CLASS));
                         this._editRecipeSubtitle = $(classSelector(EDIT_RECIPE_SUBTITLE_CLASS));
@@ -1100,7 +1150,7 @@ var alasch;
                         this._clearBtn.click(this.onClickClearButton.bind(this));
                         this._addIngredRowsBtn.click(this._ingredTableHandler.createRowsChunk.bind(this._ingredTableHandler));
                         this._ingredTableHandler.createEmptyRows(10);
-                        this._recipe = new model.RecipeDTO();
+                        this._recipe = new ui.model.RecipeDTO();
                         this._editRecipeSubtitle.hide();
                         this._addRecipeSubtitle.hide();
                         this._section.on('focus', this.onFocus.bind(this));
@@ -1132,7 +1182,7 @@ var alasch;
                             recipe = this._recipe;
                         }
                         else {
-                            recipe = new model.RecipeDTO();
+                            recipe = new ui.model.RecipeDTO();
                         }
                         recipe.name = this._recipeNameInput.val();
                         recipe.cuisine = this._recipeCuisineInput.val();
@@ -1254,7 +1304,7 @@ var alasch;
                         this._name = name;
                     }
                     return CuisineGrid;
-                })(utils.Grid);
+                })(alasch.cookbook.ui.utils.Grid);
                 // Encapsulates all hover handling over recipes items in content table
                 // Is waked-up upon mouse moved over recipe name
                 var RecipeHoverHandler = (function () {
@@ -1324,8 +1374,8 @@ var alasch;
                         _super.call(this, CONTENT_TABLE_SELECTOR, null, cbkServiceProxy);
                         this._cuisinesList = $(CUISINE_LIST_SELECTOR);
                         this._contentTable = $(CONTENT_TABLE_SELECTOR);
-                        this._cuisinesListGrid = new utils.Grid(DATALIST_OPTION_SELECTOR, this._cuisinesList);
-                        this._contentGrid = new utils.Grid(CUISINE_CONTENT_TEMPLATE_SELECTOR, this._contentTable);
+                        this._cuisinesListGrid = new alasch.cookbook.ui.utils.Grid(DATALIST_OPTION_SELECTOR, this._cuisinesList);
+                        this._contentGrid = new alasch.cookbook.ui.utils.Grid(CUISINE_CONTENT_TEMPLATE_SELECTOR, this._contentTable);
                         this._cuisineContentGrids = new Array();
                         RecipeClickHandler._contentWidget = this;
                         this._element.on('click', RECIPE_ITEM_SELECTOR, RecipeClickHandler.onRecipeClick);

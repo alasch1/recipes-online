@@ -1,0 +1,70 @@
+<!-- Operation result modal dialogs -->
+<% var data = [
+     {dlgId: "update-ok-dlg", textClass: "text-success", iconClass:"glyphicon-ok"},
+     {dlgId: "create-ok-dlg", textClass: "text-success", iconClass:"glyphicon-ok"},
+     {dlgId: "delete-ok-dlg", textClass: "text-success", iconClass:"glyphicon-ok"},
+     {dlgId: "update-err-dlg", textClass: "text-danger", iconClass:"glyphicon-remove"},
+     {dlgId: "create-err-dlg", textClass: "text-danger", iconClass:"glyphicon-remove"},
+     {dlgId: "delete-err-dlg", textClass: "text-danger", iconClass:"glyphicon-remove"}
+ ] %>
+
+<div class="templates">
+
+    <% for (var i = 0; i< data.length; i++) { %>
+        <div class="modal fade" id="<%= data[i].dlgId %>" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <!--<h4 class="modal-title text-success" data-l10n-id="<%#= data[i].labelId %>">-->
+                     </div>
+                    <div class="modal-body">
+                        <h4 class="modal-title <%= data[i].textClass %>">
+                            <span class="glyphicon <%= data[i].iconClass %>"></span>&nbsp;
+                        </h4>
+                        <button type="button" class="btn modal-ok" data-dismiss="modal">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% } %>
+
+    <!-- Operation messages-->
+    <div>
+        <h4 class="modal-title-update-ok-js" data-l10n-id="ln10-recipe-updated-ok">&nbsp;</h4>
+        <h4 class="modal-title-create-ok-js" data-l10n-id="ln10-recipe-created-ok">&nbsp;</h4>
+        <h4 class="modal-title-delete-ok-js" data-l10n-id="ln10-recipe-deleted-ok">&nbsp;</h4>
+        <h4 class="modal-title-update-failed-js" data-l10n-id="ln10-recipe-update-failed">&nbsp;</h4>
+        <h4 class="modal-title-create-failed-js" data-l10n-id="ln10-recipe-create-failed">&nbsp;</h4>
+        <h4 class="modal-title-delete-failed-js" data-l10n-id="ln10-recipe-delete-failed">&nbsp;</h4>
+    </div>
+
+</div>
+
+<!-- old modals -->
+    <!--&lt;!&ndash; Operation result modal dialog template &ndash;&gt;-->
+<!--<div class="modal fade result-modal-js" role="dialog">-->
+    <!--<div class="modal-dialog modal-sm">-->
+        <!--&lt;!&ndash; Modal content&ndash;&gt;-->
+        <!--<div class="modal-content">-->
+            <!--<div class="modal-header">-->
+                <!--<button type="button" class="close" data-dismiss="modal">&times;</button>-->
+                <!--<h4 class="modal-title">&nbsp;</h4>-->
+            <!--</div>-->
+            <!--<div class="modal-body">-->
+                <!--<button type="button" class="btn modal-ok" data-dismiss="modal">&times;</button>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+
+<!--<div>-->
+    <!--<h4 class="modal-title modal-title-update-ok-js text-success" data-l10n-id="ln10-recipe-updated-ok">&nbsp;</h4>-->
+    <!--<h4 class="modal-title modal-title-create-ok-js text-success" data-l10n-id="ln10-recipe-created-ok">&nbsp;</h4>-->
+    <!--<h4 class="modal-title modal-title-delete-ok-js text-success" data-l10n-id="ln10-recipe-deleted-ok">&nbsp;</h4>-->
+    <!--<h4 class="modal-title modal-title-update-failed-js text-danger" data-l10n-id="ln10-recipe-update-failed">&nbsp;</h4>-->
+    <!--<h4 class="modal-title modal-title-create-failed-js text-danger" data-l10n-id="ln10-recipe-create-failed">&nbsp;</h4>-->
+    <!--<h4 class="modal-title modal-title-delete-failed-js text-danger" data-l10n-id="ln10-recipe-delete-failed">&nbsp;</h4>-->
+<!--</div>-->
+
+
