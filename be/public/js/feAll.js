@@ -1233,6 +1233,7 @@ var alasch;
                         views.ModalDialogsHandler.showOperationResult(operationResultId);
                     };
                     EditRecipeWidget.prototype.clearData = function (noRecipe) {
+                        logger.debug("Entred clearData noRecipe=" + noRecipe);
                         this._ingredTableHandler.clearTable();
                         this._recipeNameInput.val('');
                         this._recipeNameInput.parent('.form-group').removeClass('has-error');
@@ -1519,15 +1520,18 @@ var alasch;
                     this._traceConsole = new ui.utils.TraceConsole();
                     this._viewRecipesWidget = ui.views.ViewRecipeWidget.getInstance();
                     this.createEditRecipeWidget();
-                    this._navBar = $(ui.utils.Helpers.idSelector('li-add-recipe-id'));
-                    this._navBar.on('click', this.onClick.bind(this));
                 }
                 AppClientMain.prototype.init = function () {
                     this._cbkServiceProxy.init();
+                    this.initJQueryElements();
+                    logger.info("Initialized OK");
+                };
+                AppClientMain.prototype.initJQueryElements = function () {
                     this._contentWidget.readContent();
                     this._editRecipeWidget.init();
                     this._traceConsole.hide();
-                    logger.info("Initialized OK");
+                    this._navBar = $(ui.utils.Helpers.idSelector('li-add-recipe-id'));
+                    this._navBar.on('click', this.onClick.bind(this));
                 };
                 AppClientMain.prototype.createEditRecipeWidget = function () {
                     var appEventListener = new ui.views.AppEventListener();

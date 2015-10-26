@@ -244,6 +244,7 @@ module alasch.cookbook.ui.views {
         }
 
         private clearData(noRecipe: boolean): void {
+            logger.debug("Entred clearData noRecipe="+ noRecipe);
             this._ingredTableHandler.clearTable();
             this._recipeNameInput.val('');
             this._recipeNameInput.parent('.form-group').removeClass('has-error');

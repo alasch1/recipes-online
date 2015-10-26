@@ -6,6 +6,7 @@ var router = express.Router();
 var logfactory = require('../utils/logger')(module);
 var logger = logfactory.createLogger();
 var cookbookHandler = require('../persistence/cookbookHandler');
+var helpers = require('../utils/helpers');
 
 var rootUrl='/';
 var recipeIdUrl = rootUrl + ':recipeId';
@@ -66,4 +67,9 @@ var deleteRecipe = function(req, res) {
     cookbookHandler.deleteRecipe(req.params.recipeId);
     logger.info('deleted recipe');
     res.sendStatus(200);
+}
+
+function logEnd(req, res, next) {
+    logger.info(helpers.endReqHandlingString(req, res));
+    next();
 }

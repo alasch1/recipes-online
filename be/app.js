@@ -3,22 +3,20 @@ var path = require('path');
 var favicon = require('serve-favicon');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-// Logs
-var morgan = require('morgan');
-//var winston = require('winston');
-var logfactory = require('./utils/logger')(module);
-var logger = logfactory.createLogger();
-var expressWinston = require('express-winston');
 
 // api
 var index = require('./routes/index');
 var content = require('./routes/content');
 var recipe = require('./routes/recipe');
 
+var helpers = require('./utils/helpers');
 var app = express();
 
-
-
+// Logs
+var morgan = require('morgan');
+var logfactory = require('./utils/logger')(module);
+var logger = logfactory.createLogger();
+var expressWinston = require('express-winston');
 var expressWinstonLog = expressWinston.logger({transports:logfactory.createTransports()});
 
 // view engine setup
@@ -44,6 +42,17 @@ app.use(cookieParser());
 //app.use(express.static(path.join(__dirname, 'public')));
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
+function logStart(req, res, next) {
+    logger.info(helpers.startReqHandlingString(req));
+    next();
+}
+
+// This is not in use -cause errors
+function logEnd(req,res,next) {
+    logger.info(helpers.endReqHandlingString(req,res));
+    if (next) next();
+}
+
 app.use(logStart);
 // Place the express-winston logger before the router.
 app.use(expressWinstonLog);
@@ -52,8 +61,7 @@ app.use('/', index);
 app.use('/cookbook', index);
 app.use('/content', content);
 app.use('/recipe', recipe);
-//.use('/recipe/:recipeId', recipe);
-app.use(logEnd);
+//app.use(logEnd);
 
 // Place the express-winston errorLogger after the router.
 app.use(expressWinstonLog);
@@ -100,43 +108,4 @@ app.use(function(err, req, res, next) {
 
 module.exports = app;
 
-var plusLine = '++++++++++++++++++++++++++++++++++++++++';
-var minusLine='-----------------------------------------';
 
-function logStart(req, res, next) {
-    logger.info(plusLine);
-    logger.info('start handling:%s',toStringRequest(req) );
-    logger.info(plusLine);
-    next();
-}
-
-function logEnd(req, res, next) {
-    //process.nextTick(function() {
-        logger.info(minusLine);
-        logger.info('finish handling:%s', toStringResult(res));
-        logger.info(minusLine);
-    //});
-    if (next) {
-        // if route was not found
-        next();
-    }
-}
-
-function toStringRequest(req) {
-    return(
-    'req:[' + req.method +
-    ', path:' + req.originalUrl +
-    ', params:' + JSON.stringify(req.params) +
-    ', query:' + JSON.stringify(req.query) +
-    ', body:' + JSON.stringify(req.body) + ']');
-}
-
-function toStringResult(res) {
-    //console.dir(res);
-    var result = ('res:[status:' + res.statusCode +
-    ' , statusMessage:' + res.statusMessage +
-    ', contentLength:' + res._contentLength +
-    ', hasBody:' + res._hasBody +
-    ']');
-    return result;
-}
