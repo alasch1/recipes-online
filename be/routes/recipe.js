@@ -37,7 +37,7 @@ module.exports = router;
 var getRecipe = function(req, res) {
     var recipe = cookbookHandler.getRecipe(req.params.recipeId);
     if (recipe) {
-        res.end(JSON.stringify(recipe));
+        res.status(200).json(recipe);
     }
     else {
         logger.debug("recipe id:%s was not found in the cookbook", req.params.recipeId);
