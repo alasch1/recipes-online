@@ -6,6 +6,7 @@ var logfactory = require('../utils/logger')(module);
 var logger = logfactory.createLogger();
 var util = require('util');
 var uuid = require('node-uuid');
+var model = require('./model/DTO');
 
 // temporary
 var cookbooks = require('../mocks/cookbookMock');
@@ -109,7 +110,7 @@ function CookbookHandler() {
 
     // Add stuff
     this.addCuisine2Cookbook = function(cookbook, cuisineName) {
-        var cuisine = new Cuisine(cuisineName);
+        var cuisine = new model.Cuisine(cuisineName);
         cuisine.id = "cu-" + uuid.v1();
         var index = cookbook.cuisines.push(cuisine) -1;
         logger.debug("Added a new dish type", cookbook.cuisines[index].name);

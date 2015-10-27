@@ -1431,7 +1431,7 @@ var alasch;
                         contentData.forEach(function (element, index, array) {
                             var cuisineElement = this._contentGrid.addCell(element, this.appendCuisineContent.bind(this));
                             this.appendRecipes(cuisineElement, element);
-                            logger.debug("Created cuisine content for" + element.name);
+                            //logger.debug("Created cuisine content for" + element.name);
                         }.bind(this));
                     };
                     ContentWidget.prototype.appendCuisineContent = function (cuisineElement, data) {
@@ -1443,7 +1443,7 @@ var alasch;
                         // Create cuisine content with recipes
                         var recipesTableElement = cuisineElement.find(RECIPE_CONTAINER_SELECTOR);
                         var cuisineGrid = new CuisineGrid(data.name, recipesTableElement);
-                        logger.debug("Recipes size 2 append:" + data.recipes.length);
+                        //logger.debug("Recipes size 2 append:" + data.recipes.length);
                         if (data.recipes.length > 0) {
                             data.recipes.forEach(function (recipe, index, array) {
                                 cuisineGrid.addCell(recipe, this.appendRecipe.bind(this));

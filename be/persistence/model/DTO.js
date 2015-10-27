@@ -13,7 +13,7 @@ function Ingredient(name, qty, units) {
     this.units = units;
 }
 
-function Recipe() {
+exports.Recipe = function() {
     this.id;// = uuid.v1();
     this.name;// = name;
     this.cuisine;// = "";
@@ -22,14 +22,13 @@ function Recipe() {
     logger.debug("Created recipe with id:", this.id);
 }
 
-function Cuisine(name) {
-    this.id = uuid.v1();
+exports.Cuisine = function(name) {
+    //this.id = uuid.v1();
     this.name = name;
     this.recipes = [];
 }
 
-function Cookbook(id, name, cuisines) {
-
+exports.Cookbook = function(id, name, cuisines) {
     this.id = id;
     this.name = name;
     this.cuisines = cuisines;
@@ -61,5 +60,6 @@ function Cookbook(id, name, cuisines) {
 }
 
 
-exports.Cookbook = Cookbook;
-exports.Recipe = Recipe;
+//exports.Cookbook = Cookbook;
+//exports.Cuisine = Cuisine;
+//exports.Recipe = Recipe;

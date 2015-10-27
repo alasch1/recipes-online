@@ -7,6 +7,7 @@ var logfactory = require('../utils/logger')(module);
 var logger = logfactory.createLogger();
 var cookbookHandler = require('../persistence/cookbookHandler');
 var helpers = require('../utils/helpers');
+var util = require('util');
 
 var rootUrl='/';
 var recipeIdUrl = rootUrl + ':recipeId';
@@ -17,59 +18,80 @@ router.get(recipeIdUrl, function(req, res, next) {
     next();
 });
 
-router.post(rootUrl, function(req, res, next) {
+router.post(rootUrl, function(req, res) {
     addRecipe(req, res);
-    next();
 });
 
-router.put(recipeIdUrl, function(req, res, next) {
+router.put(recipeIdUrl, function(req, res) {
     updateRecipe(req, res);
-    next();
 });
 
-router.delete(recipeIdUrl, function(req, res, next) {
+router.delete(recipeIdUrl, function(req, res) {
     deleteRecipe(req, res);
-    next();
 });
 
 module.exports = router;
 
 var getRecipe = function(req, res) {
-    var recipe = cookbookHandler.getRecipe(req.params.recipeId);
-    if (recipe) {
-        res.status(200).json(recipe);
+    try {
+        var recipe = cookbookHandler.getRecipe(req.params.recipeId);
+        if (recipe) {
+            res.status(200).json(recipe);
+        }
+        else {
+            logger.debug("recipe id:%s was not found in the cookbook", req.params.recipeId);
+            res.sendStatus(404);
+        }
     }
-    else {
-        logger.debug("recipe id:%s was not found in the cookbook", req.params.recipeId);
-        res.sendStatus(404);
+    catch(err) {
+        logger.error("Failed to get recipe", req.params.recipeId, err);
+        next(err);
     }
-}
+ }
 
-var addRecipe = function(req, res) {
+var addRecipe = function(req, res, next) {
     var recipe = req.body;
-    cookbookHandler.addRecipe(recipe);
-    logger.info('created recipe');
-    res.sendStatus(201);
+    try {
+        cookbookHandler.addRecipe(recipe);
+        logger.info('created recipe:'+util.inspect(recipe));
+        res.sendStatus(201);
+    }
+    catch(err) {
+        logger.error("Failed to add recipe", recipe, err);
+        next(err);
+    }
 }
 
 var updateRecipe = function(req, res) {
-    if ( cookbookHandler.updateRecipe(req.body)) {
-        logger.info('updated recipe');
-        res.sendStatus(200);
+    var recipe = req.body;
+    try {
+        if (cookbookHandler.updateRecipe(recipe)) {
+            logger.info('updated recipe', recipe);
+            res.sendStatus(200);
+        }
+        else {
+            next(new Error("Failed to update"));
+        }
     }
-    else {
-        logger.error("Failed to update");
-        res.sendStatus(404);
+    catch(err) {
+        logger.error("Failed to update recipe ", recipe, err);
+        next(err);
     }
 }
 
 var deleteRecipe = function(req, res) {
-    cookbookHandler.deleteRecipe(req.params.recipeId);
-    logger.info('deleted recipe');
-    res.sendStatus(200);
+    try {
+        cookbookHandler.deleteRecipe(req.params.recipeId);
+        logger.info('deleted recipe');
+        res.sendStatus(200);
+    }
+    catch(err) {
+        logger.error("Failed to delete recipe", req.params.recipeId, err);
+        next(err);
+    }
 }
 
-function logEnd(req, res, next) {
-    logger.info(helpers.endReqHandlingString(req, res));
-    next();
-}
+//function logEnd(req, res, next) {
+//    logger.info(helpers.endReqHandlingString(req, res));
+//    next();
+//}
