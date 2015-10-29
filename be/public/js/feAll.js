@@ -899,28 +899,6 @@ var alasch;
                     OperationResultId[OperationResultId["deleteFailed"] = 5] = "deleteFailed";
                 })(views.OperationResultId || (views.OperationResultId = {}));
                 var OperationResultId = views.OperationResultId;
-                //var dlgSelectors: any = {};
-                //var msgSelectors: any = {};
-                //
-                //(function initSelectors() {
-                //
-                //    // init dialogs ids
-                //    dlgSelectors[OperationResultId.updateOk] = 'update-ok-dlg';
-                //    dlgSelectors[OperationResultId.updateFailed] = 'update-err-dlg';
-                //    dlgSelectors[OperationResultId.createOk] = 'create-ok-dlg';
-                //    dlgSelectors[OperationResultId.createFailed] = 'create-err-dlg';
-                //    dlgSelectors[OperationResultId.deleteOk] = 'delete-ok-dlg';
-                //    dlgSelectors[OperationResultId.deleteFailed] = 'delete-err-dlg';
-                //
-                //    //// init messages ids
-                //    //msgSelectors[OperationResultId.updateOk] = 'modal-title-update-ok-js';
-                //    //msgSelectors[OperationResultId.updateFailed] = 'modal-title-update-failed-js';
-                //    //msgSelectors[OperationResultId.createOk] = 'modal-title-create-ok-js';
-                //    //msgSelectors[OperationResultId.createFailed] = 'modal-title-create-failed-js';
-                //    //msgSelectors[OperationResultId.deleteOk] = 'modal-title-delete-ok-js';
-                //    //msgSelectors[OperationResultId.deleteFailed] = 'modal-title-delete-failed-js';
-                //
-                //})();
                 var OperationResultModals = (function () {
                     function OperationResultModals() {
                         this._dialogs = {};
@@ -975,79 +953,6 @@ var alasch;
                     };
                     return SubmitDeleteModal;
                 })();
-                //var RESULT_MODAL_TEMPLATE_CLASS = 'result-modal-js';
-                //var MODAL_BODY_CLASS = 'modal-body';
-                //var OPERATION_RESULT_MODAL_ID = 'modal-result-id';
-                //var SUCCESS_ICON_SPAN_SELECTOR = '<span class="glyphicon glyphicon-ok"></span>';
-                //var FAILURE_ICON_SPAN_SELECTOR = '<span class="glyphicon glyphicon-remove"></span>';
-                //class OperationResultModal {
-                //    _dialog: JQuery;
-                //    _successIconSpan:JQuery;
-                //    _failureIconSpan: JQuery;
-                //
-                //    constructor() {
-                //    }
-                //
-                //    init() {
-                //        this._dialog = $(utils.Helpers.classSelector(RESULT_MODAL_TEMPLATE_CLASS)).clone();
-                //        this._dialog.removeClass(RESULT_MODAL_TEMPLATE_CLASS);
-                //        this._dialog.attr('id', OPERATION_RESULT_MODAL_ID);
-                //        this._successIconSpan = $(SUCCESS_ICON_SPAN_SELECTOR);
-                //        this._failureIconSpan = $(FAILURE_ICON_SPAN_SELECTOR);
-                //        this._dialog.on('hidden.bs.modal', this.cleanDialog.bind(this));
-                //    }
-                //
-                //    show(operationResultId: OperationResultId) {
-                //        switch (operationResultId) {
-                //            case OperationResultId.updateOk:
-                //            case OperationResultId.createOk:
-                //            case OperationResultId.deleteOk:
-                //                this.showSuccess(operationResultId);
-                //                break;
-                //            case OperationResultId.updateFailed:
-                //            case OperationResultId.createFailed:
-                //            case OperationResultId.deleteFailed:
-                //                this.showFailure(operationResultId);
-                //                break;
-                //        }
-                //    }
-                //
-                //    private showSuccess(operationResultId: OperationResultId) {
-                //        this.modalDialog(operationResultId, this._successIconSpan);
-                //    }
-                //
-                //    private showFailure(operationResultId: OperationResultId) {
-                //        this.modalDialog(operationResultId, this._failureIconSpan);
-                //    }
-                //
-                //    private modalDialog(operationResultId: OperationResultId, icon: JQuery) {
-                //        var dlgMessageSelector:string = this.getMessageSelector(operationResultId);
-                //        if (this._dialog) {
-                //            var dialogBody:JQuery = $(utils.Helpers.classSelector(MODAL_BODY_CLASS), this._dialog);
-                //            var dialogContent:JQuery = $(utils.Helpers.classSelector(dlgMessageSelector)).clone();
-                //            dialogContent.append(icon);
-                //            dialogBody.append(dialogContent);
-                //            this._dialog.modal('show');
-                //        }
-                //    }
-                //
-                //    private cleanDialog() {
-                //        var dialogBody:JQuery = $(utils.Helpers.classSelector(MODAL_BODY_CLASS), this._dialog);
-                //        dialogBody.empty();
-                //    }
-                //
-                //    private getMessageSelector(operationResultId: OperationResultId): string {
-                //        switch (operationResultId) {
-                //            case OperationResultId.updateOk: return 'modal-title-update-ok-js';
-                //            case OperationResultId.updateFailed: return 'modal-title-update-failed-js';
-                //            case OperationResultId.createOk: return 'modal-title-create-ok-js';
-                //            case OperationResultId.createFailed: return 'modal-title-create-failed-js';
-                //            case OperationResultId.deleteOk: return 'modal-title-delete-ok-js';
-                //            case OperationResultId.deleteFailed: return 'modal-title-delete-failed-js';
-                //        }
-                //    }
-                //
-                //}
                 var ModalDialogsHandler = (function () {
                     function ModalDialogsHandler() {
                     }
@@ -1060,13 +965,30 @@ var alasch;
                         ModalDialogsHandler._submitDeleteDlg.show(onSubmit);
                     };
                     ModalDialogsHandler.init = function () {
-                        if (!ModalDialogsHandler._operationResultDlgs) {
-                            ModalDialogsHandler._operationResultDlgs = new OperationResultModals();
+                        if (ModalDialogsHandler._isInitialized) {
+                            return;
                         }
-                        if (!ModalDialogsHandler._submitDeleteDlg) {
-                            ModalDialogsHandler._submitDeleteDlg = new SubmitDeleteModal();
-                        }
+                        ModalDialogsHandler._operationResultDlgs = new OperationResultModals();
+                        ModalDialogsHandler._submitDeleteDlg = new SubmitDeleteModal();
+                        // I am not sure this code does something helpful
+                        //$(document).on('show.bs.modal', '.modal', ModalDialogsHandler.centerModal);
+                        //$(window).on("resize", function () {
+                        //    $('.modal:visible').each(ModalDialogsHandler.centerModal);
+                        //});
+                        ModalDialogsHandler._isInitialized = true;
                     };
+                    ModalDialogsHandler.centerModal = function () {
+                        $(this).css('display', 'block');
+                        var $dialog = $(this).find(".modal-dialog");
+                        var offset = ($(window).height() - $dialog.height()) / 2;
+                        var bottomMargin = parseInt($dialog.css('marginBottom'), 10);
+                        // Make sure you don't hide the top part of the modal w/ a negative margin if it's longer than the screen height, and keep the margin equal to the bottom margin of the modal
+                        if (offset < bottomMargin) {
+                            offset = bottomMargin;
+                        }
+                        $dialog.css("margin-top", offset);
+                    };
+                    ModalDialogsHandler._isInitialized = false;
                     return ModalDialogsHandler;
                 })();
                 views.ModalDialogsHandler = ModalDialogsHandler;
