@@ -62,15 +62,15 @@ module alasch.cookbook.ui.views {
             var noData = ' - ';
             var dataElem = ingredTableRow.find(".ingred-data").text(noData);
             if (data) {
-                var buf:string = "";
-                if (data.qty) {
-                    buf += data.qty;
-                    if (data.units) {
-                        buf += " " + data.units;
-                    }
-                }
-                buf += " " + data.name + "";
-                dataElem.text(buf);
+                //var buf:string = "";
+                //if (data.qty) {
+                //    buf += data.qty;
+                //    if (data.units) {
+                //        buf += " " + data.units;
+                //    }
+                //}
+                //buf += " " + data.name + "";
+                dataElem.text(data);
             }
         }
 

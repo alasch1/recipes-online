@@ -525,16 +525,17 @@ var alasch;
             var model;
             (function (model) {
                 var logger = alasch.cookbook.ui.utils.LoggerFactory.getLogger('Cookbook');
-                var IngredientDTO = (function () {
-                    function IngredientDTO() {
-                        this.name = "";
-                        this.qty = 0;
-                        this.units = "";
-                    }
-                    return IngredientDTO;
-                })();
-                model.IngredientDTO = IngredientDTO;
-                ;
+                //export class IngredientDTO {
+                //    name: string;
+                //    qty: number;
+                //    units:string;
+                //
+                //    constructor() {
+                //        this.name = "";
+                //        this.qty = 0;
+                //        this.units = "";
+                //    }
+                //};
                 var RecipeDTO = (function () {
                     function RecipeDTO() {
                         this.ingredients = new Array();
@@ -710,15 +711,15 @@ var alasch;
                         var noData = ' - ';
                         var dataElem = ingredTableRow.find(".ingred-data").text(noData);
                         if (data) {
-                            var buf = "";
-                            if (data.qty) {
-                                buf += data.qty;
-                                if (data.units) {
-                                    buf += " " + data.units;
-                                }
-                            }
-                            buf += " " + data.name + "";
-                            dataElem.text(buf);
+                            //var buf:string = "";
+                            //if (data.qty) {
+                            //    buf += data.qty;
+                            //    if (data.units) {
+                            //        buf += " " + data.units;
+                            //    }
+                            //}
+                            //buf += " " + data.name + "";
+                            dataElem.text(data);
                         }
                     };
                     return RecipeDataBinder;
@@ -1014,11 +1015,11 @@ var alasch;
             var views;
             (function (views) {
                 var logger = alasch.cookbook.ui.utils.LoggerFactory.getLogger('EditRecipeWidget');
-                //var utils = alasch.cookbook.ui.utils;
-                var idSelector = ui.utils.Helpers.idSelector;
-                var classSelector = ui.utils.Helpers.classSelector;
-                //var model = alasch.cookbook.ui.model;
+                var utils = alasch.cookbook.ui.utils;
+                var model = alasch.cookbook.ui.model;
                 var http = alasch.cookbook.ui.http;
+                var idSelector = utils.Helpers.idSelector;
+                var classSelector = utils.Helpers.classSelector;
                 var ADD_EDIT_SECTION_ID = 'add-edit-recipe-section-id';
                 var ADD_RECIPE_SUBTITLE_CLASS = 'create-operation-js';
                 var EDIT_RECIPE_SUBTITLE_CLASS = 'update-operation-js';
@@ -1038,7 +1039,7 @@ var alasch;
                     function IngredTableHandler() {
                         this._ingredTable = $(idSelector(RECIPE_INGREDS_INPUT_ID));
                         this._ingredTableBody = this._ingredTable.children('tbody');
-                        this._ingredRowsGrid = new ui.utils.Grid(classSelector(INGRED_ROW_TEMPLATE_CLASS), this._ingredTable);
+                        this._ingredRowsGrid = new utils.Grid(classSelector(INGRED_ROW_TEMPLATE_CLASS), this._ingredTable);
                     }
                     IngredTableHandler.prototype.createEmptyRows = function (rowsNumber) {
                         for (var i = 0; i < rowsNumber; i++) {
@@ -1059,23 +1060,16 @@ var alasch;
                     IngredTableHandler.prototype.bindIngredRow = function (tr, ingredient) {
                         tr.removeClass(INGRED_ROW_TEMPLATE_CLASS);
                         if (ingredient) {
-                            tr.find('[name="ingred-name"]').val(ingredient.name);
-                            tr.find('[name="ingred-qty"]').val('' + ingredient.qty);
-                            tr.find('[name="ingred-units"]').val(ingredient.units);
+                            tr.find('[name="ingredient"]').val(ingredient);
                         }
                     };
                     IngredTableHandler.prototype.readIngredientsInput = function (recipe) {
                         recipe.ingredients = [];
                         var readIngredientRow = function (index, trElement) {
                             var tr = $(trElement);
-                            var ingredient = new ui.model.IngredientDTO();
-                            ingredient.name = tr.find('[name="ingred-name"]').val();
-                            if (ingredient.name !== '') {
-                                var qty = tr.find('[name="ingred-qty"]').val();
-                                if (qty > 0) {
-                                    ingredient.qty = qty;
-                                    ingredient.units = tr.find('[name="ingred-units"]').val();
-                                }
+                            var ingredient;
+                            ingredient = tr.find('[name="ingredient"]').val();
+                            if (ingredient !== '') {
                                 recipe.ingredients.push(ingredient);
                             }
                         };
@@ -1091,7 +1085,7 @@ var alasch;
                 var EditRecipeWidget = (function (_super) {
                     __extends(EditRecipeWidget, _super);
                     function EditRecipeWidget(appEventListener, cbkServiceProxy) {
-                        _super.call(this, ui.utils.Helpers.idSelector(RECIPE_FORM_ID), appEventListener, cbkServiceProxy);
+                        _super.call(this, utils.Helpers.idSelector(RECIPE_FORM_ID), appEventListener, cbkServiceProxy);
                         this._section = $(idSelector(ADD_EDIT_SECTION_ID));
                         this._addRecipeSubtitle = $(classSelector(ADD_RECIPE_SUBTITLE_CLASS));
                         this._editRecipeSubtitle = $(classSelector(EDIT_RECIPE_SUBTITLE_CLASS));
@@ -1114,7 +1108,7 @@ var alasch;
                         this._clearBtn.click(this.onClickClearButton.bind(this));
                         this._addIngredRowsBtn.click(this._ingredTableHandler.createRowsChunk.bind(this._ingredTableHandler));
                         this._ingredTableHandler.createEmptyRows(10);
-                        this._recipe = new ui.model.RecipeDTO();
+                        this._recipe = new model.RecipeDTO();
                         this._editRecipeSubtitle.hide();
                         this._addRecipeSubtitle.hide();
                         this._section.on('focus', this.onFocus.bind(this));
@@ -1146,7 +1140,7 @@ var alasch;
                             recipe = this._recipe;
                         }
                         else {
-                            recipe = new ui.model.RecipeDTO();
+                            recipe = new model.RecipeDTO();
                         }
                         recipe.name = this._recipeNameInput.val();
                         recipe.cuisine = this._recipeCuisineInput.val();
@@ -1291,7 +1285,7 @@ var alasch;
                     };
                     return RecipeHoverHandler;
                 })();
-                // Encapsulates selected recipe opertaitons: view/edit or delete
+                // Encapsulates selected recipe operations: view/edit or delete
                 // Delegates execution to relevant Widget
                 var RecipeClickHandler = (function () {
                     function RecipeClickHandler() {
@@ -1313,11 +1307,6 @@ var alasch;
                         }
                     };
                     RecipeClickHandler.onClickDeleteBtn = function (eventObject) {
-                        //var recipeRef = RecipeClickHandler.findBtnGlyphRecipeRef($(eventObject.target));
-                        //var recipe = RecipeClickHandler.extractRecipeData(recipeRef);
-                        //if (recipe) {
-                        //    RecipeClickHandler._contentWidget.deleteRecipe.bind(RecipeClickHandler._contentWidget)(recipe);
-                        //}
                         var invokeDelete = function (eventObject) {
                             logger.debug("Delete recipes was invoked");
                             var recipeRef = RecipeClickHandler.findBtnGlyphRecipeRef($(eventObject.target));

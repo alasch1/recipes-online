@@ -7,12 +7,12 @@
 var logfactory = require('../../utils/logger')(module);
 var logger = logfactory.createLogger();
 
-function Ingredient(name, qty, units) {
-    this.name = name;
-    this.qty = qty;
-    this.units = units;
-}
-
+//function Ingredient(name, qty, units) {
+//    this.name = name;
+//    this.qty = qty;
+//    this.units = units;
+//}
+//
 exports.Recipe = function() {
     this.id;// = uuid.v1();
     this.name;// = name;

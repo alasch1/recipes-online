@@ -61,7 +61,7 @@ module alasch.cookbook.ui.views {
         }
     }
 
-    // Encapsulates selected recipe opertaitons: view/edit or delete
+    // Encapsulates selected recipe operations: view/edit or delete
     // Delegates execution to relevant Widget
     class RecipeClickHandler {
 
@@ -86,11 +86,6 @@ module alasch.cookbook.ui.views {
         }
 
         static onClickDeleteBtn(eventObject: Event) : void {
-            //var recipeRef = RecipeClickHandler.findBtnGlyphRecipeRef($(eventObject.target));
-            //var recipe = RecipeClickHandler.extractRecipeData(recipeRef);
-            //if (recipe) {
-            //    RecipeClickHandler._contentWidget.deleteRecipe.bind(RecipeClickHandler._contentWidget)(recipe);
-            //}
             var invokeDelete = function(eventObject: Event) {
                 logger.debug("Delete recipes was invoked");
                 var recipeRef = RecipeClickHandler.findBtnGlyphRecipeRef($(eventObject.target));

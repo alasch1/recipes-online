@@ -1,0 +1,94 @@
+[
+  {
+    "id": "cb-1",
+    "name": "ala's cookbook",
+    "cuisines": [
+      {
+        "id": "cu-1",
+        "name": "עוגות ועוגיות",
+        "recipes": [
+        ]
+      },
+      {
+        "id": "cu-2",
+        "name": "סלטים",
+        "recipes": [
+        ]
+      },
+      {
+        "id": "cu-3",
+        "name": "ישראלי",
+        "recipes": [
+          {
+            "id": "re-1",
+            "name": "חביתה",
+            "cuisine": "ישראלי",
+            "ingredients": [
+              {
+                "name": "eggs",
+                "qty": "2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cu-4",
+        "name": "כללי",
+        "recipes": [
+          {
+            "id": "re-2",
+            "name": "recipe-100",
+            "cuisine": "כללי",
+            "ingredients": [
+              {
+                "name": "eggs",
+                "qty": "2"
+              },
+              {
+                "name": "water",
+                "qty": "2.5",
+                "units": "glass"
+              }
+            ],
+            "method": "stir well and drop without tasting"
+          },
+          {
+            "id": "re-3",
+            "name": "recipe-101",
+            "cuisine": "כללי",
+            "ingredients": [
+              {
+                "name": "potato",
+                "qty": "5"
+              },
+              {
+                "name": "water",
+                "qty": "2.5",
+                "units": "ltrs"
+              }
+            ],
+            "method": "boil the water and put potato inside; wait till it will be cooked well"
+          },
+          {
+            "id": "re-4",
+            "name": "פשתידת בצל",
+            "cuisine": "כללי",
+            "ingredients": [
+              {
+                "name": "ביצים",
+                "qty": "5"
+              },
+              {
+                "name": "קמח תופח",
+                "qty": "2.5",
+                "units": "כפות גדושות"
+              }
+            ],
+            "method": "boil the water and put potato inside; wait till it will be cooked well"
+          }
+        ]
+      }
+    ]
+  }
+]

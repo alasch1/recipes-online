@@ -11,11 +11,11 @@
 module alasch.cookbook.ui.views {
 
     var logger:alasch.cookbook.ui.utils.Logger = alasch.cookbook.ui.utils.LoggerFactory.getLogger('EditRecipeWidget');
-    //var utils = alasch.cookbook.ui.utils;
+    var utils = alasch.cookbook.ui.utils;
+    var model = alasch.cookbook.ui.model;
+    var http = alasch.cookbook.ui.http;
     var idSelector = utils.Helpers.idSelector;
     var classSelector = utils.Helpers.classSelector;
-    //var model = alasch.cookbook.ui.model;
-    var http = alasch.cookbook.ui.http;
 
     var ADD_EDIT_SECTION_ID = 'add-edit-recipe-section-id';
     var ADD_RECIPE_SUBTITLE_CLASS='create-operation-js';
@@ -37,12 +37,12 @@ module alasch.cookbook.ui.views {
 
         _ingredTable: JQuery;
         _ingredTableBody: JQuery;
-        _ingredRowsGrid: alasch.cookbook.ui.utils.Grid<model.IngredientDTO>;
+        _ingredRowsGrid: utils.Grid<string>;
 
         constructor() {
             this._ingredTable = $(idSelector(RECIPE_INGREDS_INPUT_ID));
             this._ingredTableBody = this._ingredTable.children('tbody');
-            this._ingredRowsGrid = new utils.Grid<model.IngredientDTO>(classSelector(INGRED_ROW_TEMPLATE_CLASS), this._ingredTable);
+            this._ingredRowsGrid = new utils.Grid<string>(classSelector(INGRED_ROW_TEMPLATE_CLASS), this._ingredTable);
         }
 
         createEmptyRows(rowsNumber: number): void {
@@ -65,12 +65,13 @@ module alasch.cookbook.ui.views {
             }
         }
 
-        bindIngredRow(tr: JQuery, ingredient?: alasch.cookbook.ui.model.IngredientDTO): void {
+        bindIngredRow(tr: JQuery, ingredient?: string): void {
             tr.removeClass(INGRED_ROW_TEMPLATE_CLASS);
             if (ingredient) {
-                tr.find('[name="ingred-name"]').val(ingredient.name);
-                tr.find('[name="ingred-qty"]').val('' + ingredient.qty);
-                tr.find('[name="ingred-units"]').val(ingredient.units);
+                tr.find('[name="ingredient"]').val(ingredient);
+                //tr.find('[name="ingred-name"]').val(ingredient.name);
+                //tr.find('[name="ingred-qty"]').val('' + ingredient.qty);
+                //tr.find('[name="ingred-units"]').val(ingredient.units);
             }
         }
 
@@ -78,14 +79,9 @@ module alasch.cookbook.ui.views {
             recipe.ingredients=[];
             var readIngredientRow = function(index:number, trElement:HTMLElement) {
                 var tr = $(trElement);
-                var ingredient: alasch.cookbook.ui.model.IngredientDTO = new model.IngredientDTO();
-                ingredient.name = tr.find('[name="ingred-name"]').val();
-                if (ingredient.name !== '') {
-                    var qty = tr.find('[name="ingred-qty"]').val();
-                    if (qty > 0){
-                        ingredient.qty = qty;
-                        ingredient.units = tr.find('[name="ingred-units"]').val();
-                    }
+                var ingredient: string;
+                ingredient = tr.find('[name="ingredient"]').val();
+                if (ingredient !== '') {
                     recipe.ingredients.push(ingredient);
                 }
             };
@@ -119,11 +115,11 @@ module alasch.cookbook.ui.views {
         private _ingredTableHandler: IngredTableHandler;
         private _emptyNameError: JQuery;// = $('#recipe-name-input-id').siblings('.help-block');
 
-        static editRecipe(recipe: alasch.cookbook.ui.model.RecipeDTO): void {
+        static editRecipe(recipe: model.RecipeDTO): void {
             EditRecipeWidget.singleton.showRecipe(recipe);
         }
 
-        constructor(appEventListener: AppEventListener, cbkServiceProxy: alasch.cookbook.ui.http.CookbookServiceProxy) {
+        constructor(appEventListener: AppEventListener, cbkServiceProxy: http.CookbookServiceProxy) {
             super(utils.Helpers.idSelector(RECIPE_FORM_ID), appEventListener,  cbkServiceProxy);
             this._section = $(idSelector(ADD_EDIT_SECTION_ID));
             this._addRecipeSubtitle = $(classSelector(ADD_RECIPE_SUBTITLE_CLASS));

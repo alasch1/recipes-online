@@ -35,7 +35,7 @@ body {
 }
 
 .headline h1 {
-    font-size: 55px;
+    font-size: 140px;
 }
 
 .cookbook-title {
@@ -62,6 +62,8 @@ body {
     width:100%;
     height: 100%;
     margin-bottom: 20px;
+    padding-right: 50px;
+    padding-left: 50px;
 }
 
 .section-heading {
@@ -254,13 +256,22 @@ form label {
     text-align: center;
 }
 
+.width-100 {
+    width: 100%;
+}
+
 .ingred-table {
     height: 100%;
-    min-height: 320px;
+    min-height: 300px;
     margin-bottom: 2px;
 }
 
-.table-rtl, .table-cell-sm, .table-cell-lg {
+/*.ingred-table-cell {*/
+    /*width:100%;*/
+    /*display:table-cell;*/
+/*}*/
+
+.table-rtl, .table-cell-sm, .table-cell-lg, .table-cell-xl {
     direction: rtl;
 }
 
@@ -276,11 +287,12 @@ form label {
 
 .table-cell-xl {
     text-align: right;
-    width: 90%;
+    width: 100%;
+    min-width: 300px;
 }
 
 table input {
-    width: 100%;
+    /*width: 100%;*/
     border: none;
 }
 
