@@ -890,11 +890,6 @@ var alasch;
             (function (views) {
                 var logger = alasch.cookbook.ui.utils.LoggerFactory.getLogger('ModalDialogs');
                 var utils = alasch.cookbook.ui.utils;
-                //var RESULT_MODAL_TEMPLATE_CLASS = 'result-modal-js';
-                //var MODAL_BODY_CLASS = 'modal-body';
-                //var OPERATION_RESULT_MODAL_ID = 'modal-result-id';
-                //var SUCCESS_ICON_SPAN_SELECTOR = '<span class="glyphicon glyphicon-ok"></span>';
-                //var FAILURE_ICON_SPAN_SELECTOR = '<span class="glyphicon glyphicon-remove"></span>';
                 (function (OperationResultId) {
                     OperationResultId[OperationResultId["updateOk"] = 0] = "updateOk";
                     OperationResultId[OperationResultId["updateFailed"] = 1] = "updateFailed";
@@ -904,46 +899,87 @@ var alasch;
                     OperationResultId[OperationResultId["deleteFailed"] = 5] = "deleteFailed";
                 })(views.OperationResultId || (views.OperationResultId = {}));
                 var OperationResultId = views.OperationResultId;
-                var dlgSelectors = {};
-                var msgSelectors = {};
-                (function initSelectors() {
-                    // init dialogs ids
-                    dlgSelectors[0 /* updateOk */] = 'update-ok-dlg';
-                    dlgSelectors[1 /* updateFailed */] = 'update-err-dlg';
-                    dlgSelectors[2 /* createOk */] = 'create-ok-dlg';
-                    dlgSelectors[3 /* createFailed */] = 'create-err-dlg';
-                    dlgSelectors[4 /* deleteOk */] = 'delete-ok-dlg';
-                    dlgSelectors[5 /* deleteFailed */] = 'delete-err-dlg';
-                    // init messages ids
-                    msgSelectors[0 /* updateOk */] = 'modal-title-update-ok-js';
-                    msgSelectors[1 /* updateFailed */] = 'modal-title-update-failed-js';
-                    msgSelectors[2 /* createOk */] = 'modal-title-create-ok-js';
-                    msgSelectors[3 /* createFailed */] = 'modal-title-create-failed-js';
-                    msgSelectors[4 /* deleteOk */] = 'modal-title-delete-ok-js';
-                    msgSelectors[5 /* deleteFailed */] = 'modal-title-delete-failed-js';
-                })();
+                //var dlgSelectors: any = {};
+                //var msgSelectors: any = {};
+                //
+                //(function initSelectors() {
+                //
+                //    // init dialogs ids
+                //    dlgSelectors[OperationResultId.updateOk] = 'update-ok-dlg';
+                //    dlgSelectors[OperationResultId.updateFailed] = 'update-err-dlg';
+                //    dlgSelectors[OperationResultId.createOk] = 'create-ok-dlg';
+                //    dlgSelectors[OperationResultId.createFailed] = 'create-err-dlg';
+                //    dlgSelectors[OperationResultId.deleteOk] = 'delete-ok-dlg';
+                //    dlgSelectors[OperationResultId.deleteFailed] = 'delete-err-dlg';
+                //
+                //    //// init messages ids
+                //    //msgSelectors[OperationResultId.updateOk] = 'modal-title-update-ok-js';
+                //    //msgSelectors[OperationResultId.updateFailed] = 'modal-title-update-failed-js';
+                //    //msgSelectors[OperationResultId.createOk] = 'modal-title-create-ok-js';
+                //    //msgSelectors[OperationResultId.createFailed] = 'modal-title-create-failed-js';
+                //    //msgSelectors[OperationResultId.deleteOk] = 'modal-title-delete-ok-js';
+                //    //msgSelectors[OperationResultId.deleteFailed] = 'modal-title-delete-failed-js';
+                //
+                //})();
                 var OperationResultModals = (function () {
                     function OperationResultModals() {
                         this._dialogs = {};
+                        this.init();
                     }
-                    OperationResultModals.prototype.init = function () {
-                        for (var opId in OperationResultId) {
-                            var dlgId = dlgSelectors[opId];
-                            var dlg = $(utils.Helpers.idSelector(dlgSelectors[opId])).clone();
-                            var dlgTitle = $('.modal-title', dlg);
-                            var dlgSpan = $('span', dlg).clone();
-                            var titleMsg = $(utils.Helpers.classSelector(msgSelectors[opId])).text();
-                            dlgTitle.text(titleMsg);
-                            dlgTitle.append(dlgSpan);
-                            this._dialogs[opId] = dlg;
-                        }
-                    };
                     OperationResultModals.prototype.show = function (operationResultId) {
                         var dlg = this._dialogs[operationResultId];
                         dlg.modal('show');
                     };
+                    OperationResultModals.prototype.init = function () {
+                        // init dialogs
+                        this._dialogs[0 /* updateOk */] = this.getDialog('update-ok-dlg');
+                        this._dialogs[1 /* updateFailed */] = this.getDialog('update-err-dlg');
+                        this._dialogs[2 /* createOk */] = this.getDialog('create-ok-dlg');
+                        this._dialogs[3 /* createFailed */] = this.getDialog('create-err-dlg');
+                        this._dialogs[4 /* deleteOk */] = this.getDialog('delete-ok-dlg');
+                        this._dialogs[5 /* deleteFailed */] = this.getDialog('delete-err-dlg');
+                    };
+                    OperationResultModals.prototype.getDialog = function (dlgId) {
+                        return $(utils.Helpers.idSelector(dlgId)).clone();
+                    };
                     return OperationResultModals;
                 })();
+                var SubmitHandler = (function () {
+                    function SubmitHandler(method, data) {
+                        this.method = method;
+                        this.data = data;
+                    }
+                    return SubmitHandler;
+                })();
+                views.SubmitHandler = SubmitHandler;
+                ;
+                var SubmitDeleteModal = (function () {
+                    function SubmitDeleteModal() {
+                        this._dlgId = 'submit-delete-recipe-dlg';
+                        this._submitBtnPrefix = 'submit-btn-';
+                        this.init();
+                    }
+                    SubmitDeleteModal.prototype.init = function () {
+                        this._dialog = $(utils.Helpers.idSelector(this._dlgId)).clone();
+                        this._submitBtn = $(utils.Helpers.idSelector(this._submitBtnPrefix + this._dlgId), this._dialog);
+                        //this._cancelBtn = $(utils.Helpers.idSelector(this._cancelBtnPrefix+this._dlgId), this._dialog);
+                        this._submitBtn.click(this.onSubmitClick.bind(this));
+                    };
+                    SubmitDeleteModal.prototype.show = function (submitHandler) {
+                        this._submitHandler = submitHandler;
+                        this._dialog.modal('show');
+                    };
+                    SubmitDeleteModal.prototype.onSubmitClick = function () {
+                        this._dialog.modal('hide');
+                        this._submitHandler.method(this._submitHandler.data);
+                    };
+                    return SubmitDeleteModal;
+                })();
+                //var RESULT_MODAL_TEMPLATE_CLASS = 'result-modal-js';
+                //var MODAL_BODY_CLASS = 'modal-body';
+                //var OPERATION_RESULT_MODAL_ID = 'modal-result-id';
+                //var SUCCESS_ICON_SPAN_SELECTOR = '<span class="glyphicon glyphicon-ok"></span>';
+                //var FAILURE_ICON_SPAN_SELECTOR = '<span class="glyphicon glyphicon-remove"></span>';
                 //class OperationResultModal {
                 //    _dialog: JQuery;
                 //    _successIconSpan:JQuery;
@@ -1019,10 +1055,16 @@ var alasch;
                         ModalDialogsHandler.init();
                         ModalDialogsHandler._operationResultDlgs.show(operationResultId);
                     };
+                    ModalDialogsHandler.showSubmitDelete = function (onSubmit) {
+                        ModalDialogsHandler.init();
+                        ModalDialogsHandler._submitDeleteDlg.show(onSubmit);
+                    };
                     ModalDialogsHandler.init = function () {
                         if (!ModalDialogsHandler._operationResultDlgs) {
                             ModalDialogsHandler._operationResultDlgs = new OperationResultModals();
-                            ModalDialogsHandler._operationResultDlgs.init();
+                        }
+                        if (!ModalDialogsHandler._submitDeleteDlg) {
+                            ModalDialogsHandler._submitDeleteDlg = new SubmitDeleteModal();
                         }
                     };
                     return ModalDialogsHandler;
@@ -1274,6 +1316,7 @@ var alasch;
 /// <reference path="../utils/Grid.ts"/>
 /// <reference path="./ViewRecipeWidget.ts" />
 /// <reference path="./EditRecipeWidget.ts" />
+/// <reference path="./ModalDialog.ts" />
 var alasch;
 (function (alasch) {
     var cookbook;
@@ -1348,11 +1391,20 @@ var alasch;
                         }
                     };
                     RecipeClickHandler.onClickDeleteBtn = function (eventObject) {
-                        var recipeRef = RecipeClickHandler.findBtnGlyphRecipeRef($(eventObject.target));
-                        var recipe = RecipeClickHandler.extractRecipeData(recipeRef);
-                        if (recipe) {
-                            RecipeClickHandler._contentWidget.deleteRecipe.bind(RecipeClickHandler._contentWidget)(recipe);
-                        }
+                        //var recipeRef = RecipeClickHandler.findBtnGlyphRecipeRef($(eventObject.target));
+                        //var recipe = RecipeClickHandler.extractRecipeData(recipeRef);
+                        //if (recipe) {
+                        //    RecipeClickHandler._contentWidget.deleteRecipe.bind(RecipeClickHandler._contentWidget)(recipe);
+                        //}
+                        var invokeDelete = function (eventObject) {
+                            logger.debug("Delete recipes was invoked");
+                            var recipeRef = RecipeClickHandler.findBtnGlyphRecipeRef($(eventObject.target));
+                            var recipe = RecipeClickHandler.extractRecipeData(recipeRef);
+                            if (recipe) {
+                                RecipeClickHandler._contentWidget.deleteRecipe.bind(RecipeClickHandler._contentWidget)(recipe);
+                            }
+                        };
+                        views.ModalDialogsHandler.showSubmitDelete(new views.SubmitHandler(invokeDelete, eventObject));
                     };
                     RecipeClickHandler.findBtnGlyphRecipeRef = function (clickedElement) {
                         return clickedElement.parents(RECIPE_ROW_SELECTOR).find(RECIPE_ITEM_SELECTOR);

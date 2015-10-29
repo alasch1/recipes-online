@@ -8,6 +8,7 @@
 /// <reference path="../utils/Grid.ts"/>
 /// <reference path="./ViewRecipeWidget.ts" />
 /// <reference path="./EditRecipeWidget.ts" />
+/// <reference path="./ModalDialog.ts" />
 
 module alasch.cookbook.ui.views {
 
@@ -85,11 +86,21 @@ module alasch.cookbook.ui.views {
         }
 
         static onClickDeleteBtn(eventObject: Event) : void {
-            var recipeRef = RecipeClickHandler.findBtnGlyphRecipeRef($(eventObject.target));
-            var recipe = RecipeClickHandler.extractRecipeData(recipeRef);
-            if (recipe) {
-                RecipeClickHandler._contentWidget.deleteRecipe.bind(RecipeClickHandler._contentWidget)(recipe);
+            //var recipeRef = RecipeClickHandler.findBtnGlyphRecipeRef($(eventObject.target));
+            //var recipe = RecipeClickHandler.extractRecipeData(recipeRef);
+            //if (recipe) {
+            //    RecipeClickHandler._contentWidget.deleteRecipe.bind(RecipeClickHandler._contentWidget)(recipe);
+            //}
+            var invokeDelete = function(eventObject: Event) {
+                logger.debug("Delete recipes was invoked");
+                var recipeRef = RecipeClickHandler.findBtnGlyphRecipeRef($(eventObject.target));
+                var recipe = RecipeClickHandler.extractRecipeData(recipeRef);
+                if (recipe) {
+                    RecipeClickHandler._contentWidget.deleteRecipe.bind(RecipeClickHandler._contentWidget)(recipe);
+                }
             }
+
+            ModalDialogsHandler.showSubmitDelete(new SubmitHandler(invokeDelete, eventObject));
         }
 
         private static findBtnGlyphRecipeRef(clickedElement: JQuery): JQuery {
