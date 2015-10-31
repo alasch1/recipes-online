@@ -45,7 +45,7 @@ module alasch.cookbook.ui.views {
         }
 
         private appendIngredientsTable(ingredTable:JQuery, data:model.RecipeDTO):void {
-            var ingredGrid:utils.Grid<model.IngredientDTO> = new utils.Grid<model.IngredientDTO>(INGRED_ROW_TEMPLATE_SELECTOR, ingredTable);
+            var ingredGrid:utils.Grid<string> = new utils.Grid<string>(INGRED_ROW_TEMPLATE_SELECTOR, ingredTable);
             if (data.ingredients.length > 0) {
                 data.ingredients.forEach(function (ingredient, index, array) {
                     ingredGrid.addCell(ingredient, this.appendIngredient);
@@ -57,7 +57,7 @@ module alasch.cookbook.ui.views {
             }
         }
 
-        private appendIngredient(ingredTableRow:JQuery, data:model.IngredientDTO) {
+        private appendIngredient(ingredTableRow:JQuery, data:string) {
             ingredTableRow.removeClass("ingred-row-template");
             var noData = ' - ';
             var dataElem = ingredTableRow.find(".ingred-data").text(noData);

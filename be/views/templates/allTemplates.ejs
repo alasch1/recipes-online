@@ -1,8 +1,10 @@
-<div class="templates">
+<div class="templates" xmlns="http://www.w3.org/1999/html">
 
     <div class="cuisine-template cuisine-container">
         <div class="cuisine-inner-box col-xs-12 well-color">
-            <h3 class="cuisine-js">&nbsp;</h3>
+            <h3 class="cuisine-js"><span class="cuisine-name-js"></span>
+                <button type="button" class="display-none delete-cuisine-btn-js btn btn-xs cuisine-hover-toggle-js"><span class="glyphicon glyphicon-trash"></span></button>
+            </h3>
             <div class="recipes-index recipes-tab-js">
             </div>
         </div>
@@ -16,9 +18,9 @@
                     <span class="recipe-ref-js" data-l10n-id="ln10-empty-cuisine">&nbsp;></span>
                     <!--<a class="recipe-ref-js" href="javascript:void(0)" data-l10n-id="ln10-empty-cuisine">&nbsp;</a>-->
                 </td>
-                <td class="display-none toggable-buttons-js">
-                    <button type="button" class="edit-btn-js btn btn-xs"><span class="glyphicon glyphicon-edit"></span></button>
-                    <button type="button" class="delete-btn-js btn btn-xs"><span class="glyphicon glyphicon-remove"></span></button>
+                <td class="display-none recipe-hover-toggle-js">
+                    <button type="button" class="edit-recipe-btn-js btn btn-xs"><span class="glyphicon glyphicon-edit"></span></button>
+                    <button type="button" class="delete-recipe-btn-js btn btn-xs"><span class="glyphicon glyphicon-trash"></span></button>
                 </td>
             </tr>
         </table>

@@ -32,6 +32,7 @@ module alasch.cookbook.ui.model {
     };
 
     export class CuisineDTO {
+        id: string;
         name: string;
         recipes: RecipeDTO[];
 
@@ -46,10 +47,10 @@ module alasch.cookbook.ui.model {
     };
 
     export class CookbookDTO {
-        id: number;
+        id: string;
         cuisines: CuisineDTO[];
 
-        constructor(id: number) {
+        constructor(id: string) {
             this.id = id;
             this.cuisines = new Array<CuisineDTO>();
         }

@@ -4,7 +4,7 @@
 
 /// <reference path="./definitions/jquery.d.ts" />
 /// <reference path="./views/BaseWidget.ts" />
-/// <reference path="./views/ContentWidget.ts" />
+/// <reference path="./views/content/ContentWidget.ts" />
 /// <reference path="./views/ViewRecipeWidget.ts" />
 /// <reference path="./views/EditRecipeWidget.ts" />
 /// <reference path="./views/ModalDialog.ts" />
@@ -19,7 +19,7 @@ module alasch.cookbook.ui {
     var logger:alasch.cookbook.ui.utils.Logger = alasch.cookbook.ui.utils.LoggerFactory.getLogger('AppClientMain');
 
     export class AppClientMain {
-        _contentWidget: views.ContentWidget;
+        _contentWidget: views.content.ContentWidget;
         _viewRecipesWidget: views.ViewRecipeWidget;
         _editRecipeWidget: views.EditRecipeWidget;
         _traceConsole: utils.TraceConsole;
@@ -28,7 +28,7 @@ module alasch.cookbook.ui {
 
         constructor() {
             this._cbkServiceProxy = new http.CookbookServiceProxy();
-            this._contentWidget = new views.ContentWidget(this._cbkServiceProxy);
+            this._contentWidget = new views.content.ContentWidget(this._cbkServiceProxy);
             this._traceConsole = new utils.TraceConsole();
             this._viewRecipesWidget = views.ViewRecipeWidget.getInstance();
             this.createEditRecipeWidget();

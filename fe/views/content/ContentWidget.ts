@@ -2,15 +2,16 @@
  * Created by aschneider on 9/23/2015.
  */
 
-/// <reference path="./BaseWidget.ts" />
-/// <reference path="../utils/TraceConsole.ts" />
-/// <reference path="../model/CookbookDTO.ts" />
-/// <reference path="../utils/Grid.ts"/>
-/// <reference path="./ViewRecipeWidget.ts" />
-/// <reference path="./EditRecipeWidget.ts" />
-/// <reference path="./ModalDialog.ts" />
+/// <reference path="./../BaseWidget.ts" />
+/// <reference path="../../utils/TraceConsole.ts" />
+/// <reference path="../../model/CookbookDTO.ts" />
+/// <reference path="../../utils/Grid.ts"/>
+/// <reference path="../ViewRecipeWidget.ts" />
+/// <reference path="../EditRecipeWidget.ts" />
+/// <reference path="../ModalDialog.ts" />
+/// <reference path="./Helpers.ts" />
 
-module alasch.cookbook.ui.views {
+module alasch.cookbook.ui.views.content {
 
     var logger:alasch.cookbook.ui.utils.Logger = alasch.cookbook.ui.utils.LoggerFactory.getLogger('ContentWidget');
     var utils = alasch.cookbook.ui.utils;
@@ -20,15 +21,19 @@ module alasch.cookbook.ui.views {
     var CUISINE_LIST_SELECTOR: string = '#cuisines-datalist';
     var DATALIST_OPTION_SELECTOR: string ='<option></option>';
     var CONTENT_TABLE_SELECTOR: string = '#content-table';
-    var CUISINE_CONTENT_TEMPLATE_SELECTOR: string = '.cuisine-template';
+    var CUISINE_TEMPLATE_CLASS: string = 'cuisine-template';
+    var CUISINE_CONTAINER_SELECTOR: string = '.cuisine-container';
+    var CUISINE_JS_SELECTOR: string='.cuisine-js';
+    var CUISINE_NAME_JS_SELECTOR: string='.cuisine-name-js';
+    var CUISINE_DATA_PROPERTY = 'cuisine_data';
     var RECIPE_CONTAINER_SELECTOR = '.recipes-tab-js';
     var RECIPE_TEMPLATE_SELECTOR = '.recipe-row-template';
     var RECIPE_DATA_PROPERTY = 'recipe_data';
     var RECIPE_ROW_SELECTOR = '.recipe-row-js';
-    var TOGGABLE_BTNS_SELECTOR = '.toggable-buttons-js';
-    var RECIPE_ITEM_SELECTOR = '.recipe-ref-js';
-    var EDIT_RECIPE_BTN_SELECTOR = '.edit-btn-js';
-    var DELETE_RECIPE_BTN_SELECTOR = '.delete-btn-js';
+    var RECIPE_REF_JS_SELECTOR = '.recipe-ref-js';
+    var EDIT_RECIPE_BTN_SELECTOR = '.edit-recipe-btn-js';
+    var DELETE_RECIPE_BTN_SELECTOR = '.delete-recipe-btn-js';
+    var DELETE_CUISINE_BTN_SELECTOR = '.delete-cuisine-btn-js';
 
     class CuisineGrid extends alasch.cookbook.ui.utils.Grid<model.RecipeDTO>{
         _name ; string;
@@ -36,28 +41,6 @@ module alasch.cookbook.ui.views {
         constructor(name: string, container: JQuery) {
             super(RECIPE_TEMPLATE_SELECTOR, container);
             this._name = name;
-        }
-    }
-
-    // Encapsulates all hover handling over recipes items in content table
-    // Is waked-up upon mouse moved over recipe name
-
-    class RecipeHoverHandler {
-
-        static onMouseEnter() : void {
-            var selectedElement: JQuery = $(this);
-            selectedElement.css('text-decoration', 'underline');
-            RecipeHoverHandler.getToggableBtnsCell(selectedElement).show();
-        }
-
-        static onMouseLeave() : void {
-            var selectedElement: JQuery = $(this);
-            selectedElement.css('text-decoration', '');
-            RecipeHoverHandler.getToggableBtnsCell(selectedElement).hide();
-        }
-
-        private static getToggableBtnsCell(selectedElement: JQuery): JQuery {
-            return selectedElement.find(TOGGABLE_BTNS_SELECTOR);
         }
     }
 
@@ -99,7 +82,7 @@ module alasch.cookbook.ui.views {
         }
 
         private static findBtnGlyphRecipeRef(clickedElement: JQuery): JQuery {
-            return clickedElement.parents(RECIPE_ROW_SELECTOR).find(RECIPE_ITEM_SELECTOR);
+            return clickedElement.parents(RECIPE_ROW_SELECTOR).find(RECIPE_REF_JS_SELECTOR);
         }
 
         private static extractRecipeData(jqElement: JQuery) : alasch.cookbook.ui.model.RecipeDTO {
@@ -126,14 +109,17 @@ module alasch.cookbook.ui.views {
             this._cuisinesList = $(CUISINE_LIST_SELECTOR);
             this._contentTable = $(CONTENT_TABLE_SELECTOR);
             this._cuisinesListGrid =  new alasch.cookbook.ui.utils.Grid<model.CuisineDTO>(DATALIST_OPTION_SELECTOR, this._cuisinesList);
-            this._contentGrid = new alasch.cookbook.ui.utils.Grid<model.CuisineDTO>(CUISINE_CONTENT_TEMPLATE_SELECTOR, this._contentTable);
+            this._contentGrid = new utils.Grid<model.CuisineDTO>(
+                utils.Helpers.classSelector(CUISINE_TEMPLATE_CLASS), this._contentTable);
             this._cuisineContentGrids = new Array<CuisineGrid>();
             RecipeClickHandler._contentWidget = this;
-            this._element.on('click',RECIPE_ITEM_SELECTOR, RecipeClickHandler.onRecipeClick);
-            this._element.on('mouseenter',RECIPE_ROW_SELECTOR, RecipeHoverHandler.onMouseEnter);
-            this._element.on('mouseleave',RECIPE_ROW_SELECTOR, RecipeHoverHandler.onMouseLeave);
+            this._element.on('click',RECIPE_REF_JS_SELECTOR, RecipeClickHandler.onRecipeClick);
+            this._element.on('mouseenter',RECIPE_ROW_SELECTOR, ElementHoverHandler.onMouseEnterRecipe);
+            this._element.on('mouseleave',RECIPE_ROW_SELECTOR, ElementHoverHandler.onMouseLeaveRecipe);
             this._element.on('click', EDIT_RECIPE_BTN_SELECTOR, RecipeClickHandler.onClickEditBtn);
             this._element.on('click', DELETE_RECIPE_BTN_SELECTOR, RecipeClickHandler.onClickDeleteBtn);
+            this._element.on('mouseenter',CUISINE_JS_SELECTOR, ElementHoverHandler.onMouseEnterCuisine);
+            this._element.on('mouseleave',CUISINE_JS_SELECTOR, ElementHoverHandler.onMouseLeaveCuisine);
         }
 
         /**
@@ -178,8 +164,8 @@ module alasch.cookbook.ui.views {
             this._cuisineContentGrids = [];
         }
 
-        private initCuisineList(contentData: alasch.cookbook.ui.model.CuisineDTO[]): void {
-            var appendOption = function(optionElement: JQuery, data:alasch.cookbook.ui.model.CuisineDTO) {
+        private initCuisineList(contentData: model.CuisineDTO[]): void {
+            var appendOption = function(optionElement: JQuery, data:model.CuisineDTO) {
                 optionElement.attr("value", data.name);
             };
 
@@ -197,13 +183,23 @@ module alasch.cookbook.ui.views {
             }.bind(this));
         }
 
-        private appendCuisineContent(cuisineElement:JQuery, data:alasch.cookbook.ui.model.CuisineDTO) : void {
-            cuisineElement.removeClass("cuisine-template");
-            var header = cuisineElement.find(".cuisine-js");
-            header.text(data.name);
+        private appendCuisineContent(cuisineElement:JQuery, data:model.CuisineDTO) : void {
+            cuisineElement.removeClass(CUISINE_TEMPLATE_CLASS);
+            var cuisineRef = cuisineElement.find(CUISINE_NAME_JS_SELECTOR);
+            var deleteBtn = cuisineElement.find(DELETE_CUISINE_BTN_SELECTOR);
+            cuisineRef.text(data.name);
+            if (data.recipes.length > 0) {
+                cuisineRef.attr('id', '' + data.id);
+                cuisineRef.get(0)[CUISINE_DATA_PROPERTY] = data;
+                // No delete for cuisine with recipes
+                deleteBtn.remove();
+            }
+            else {
+                deleteBtn.attr('id', 'delete-cuisine-btn-' + data.id);
+            }
         }
 
-        private appendRecipes(cuisineElement: JQuery, data: alasch.cookbook.ui.model.CuisineDTO) {
+        private appendRecipes(cuisineElement: JQuery, data: model.CuisineDTO) {
             // Create cuisine content with recipes
             var recipesTableElement = cuisineElement.find(RECIPE_CONTAINER_SELECTOR);
             var cuisineGrid = new CuisineGrid(data.name, recipesTableElement);
@@ -222,17 +218,19 @@ module alasch.cookbook.ui.views {
         }
 
         private appendRecipe (recipeListElement: JQuery, data?: alasch.cookbook.ui.model.RecipeDTO): void {
-            var recipeRef = recipeListElement.find('.recipe-ref-js');
-            var editBtn = recipeListElement.find('.edit-btn-js');
-            var deleteBtn = recipeListElement.find('.delete-btn-js');
+            var recipeRef = recipeListElement.find(RECIPE_REF_JS_SELECTOR);//'.recipe-ref-js');
+            //var editBtn = recipeListElement.find('.edit-recipe-btn-js');
+            //var deleteBtn = recipeListElement.find('.delete-recipe-btn-js');
+            var editBtn = recipeListElement.find(EDIT_RECIPE_BTN_SELECTOR);
+            var deleteBtn = recipeListElement.find(DELETE_RECIPE_BTN_SELECTOR);
 
             if (data) {
                 recipeRef.removeAttr("data-l10n-id");
                 recipeRef.text(data.name);
                 recipeRef.attr('id', '' + data.id);
                 recipeRef.get(0)[RECIPE_DATA_PROPERTY] = data;
-                editBtn.attr('id', 'edit-btn-' + data.id);
-                deleteBtn.attr('id', 'delete-btn-' + data.id);
+                editBtn.attr('id', 'edit-recipe-btn-' + data.id);
+                deleteBtn.attr('id', 'delete-recipe-btn-' + data.id);
             }
             else {
                 recipeRef.removeData("");

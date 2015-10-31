@@ -174,8 +174,9 @@ footer {
 }
 
 .cuisine-container h3 {
-    margin: 10px;
-    margin-bottom: 0;
+    /*margin: 10px;*/
+    /*margin-bottom: 15px;*/
+    padding: 5px 10px;
 }
 
 .cuisine-inner-box {
