@@ -298,8 +298,8 @@ table input {
     border: none;
 }
 
-textarea {
-    min-height: 330px;
+.method-input {
+    min-height: 350px;
     direction: rtl;
     resize: both;
 }

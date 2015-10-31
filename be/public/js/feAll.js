@@ -1111,28 +1111,24 @@ var alasch;
                         this._recipe = new model.RecipeDTO();
                         this._editRecipeSubtitle.hide();
                         this._addRecipeSubtitle.hide();
-                        this._section.on('focus', this.onFocus.bind(this));
                     };
                     EditRecipeWidget.prototype.showRecipe = function (recipe) {
                         this._recipe = recipe;
-                        //this.clearData(false);
-                        //this.bindEditRecipeData();
+                        this.clearData(false);
+                        this.bindEditRecipeData();
                         this._section.focus();
                     };
                     EditRecipeWidget.prototype.clear = function () {
                         this.clearData(true);
                     };
-                    EditRecipeWidget.prototype.onFocus = function (eventObject) {
-                        if (this._recipe) {
+                    EditRecipeWidget.prototype.onClickClearButton = function () {
+                        if (!this._recipe) {
+                            this.clearData(true);
+                        }
+                        else {
                             this.clearData(false);
                             this.bindEditRecipeData();
                         }
-                        else {
-                            this.clearData(true);
-                        }
-                    };
-                    EditRecipeWidget.prototype.onClickClearButton = function () {
-                        this.clearData(true);
                     };
                     EditRecipeWidget.prototype.onClickSaveButton = function () {
                         var recipe;
@@ -1157,11 +1153,16 @@ var alasch;
                         }
                     };
                     EditRecipeWidget.prototype.isValidInput = function (recipe) {
+                        var errorElementClass = 'has-error';
                         if (recipe.name.length == 0) {
                             logger.error("Invalid recipe data: name is empty");
-                            this._recipeNameInput.parent('.form-group').addClass('has-error');
+                            this._recipeNameInput.parent('.form-group').addClass(errorElementClass);
                             this._emptyNameError.show();
                             return false;
+                        }
+                        else {
+                            this._recipeNameInput.parent('.form-group').removeClass(errorElementClass);
+                            this._emptyNameError.hide();
                         }
                         return true;
                     };
@@ -1179,6 +1180,7 @@ var alasch;
                         }
                         views.ModalDialogsHandler.showOperationResult(operationResultId);
                         this._appEventListener.notify(appEvent);
+                        this.clearData(true);
                     };
                     EditRecipeWidget.prototype.onSaveError = function (errCode) {
                         var operationResultId;

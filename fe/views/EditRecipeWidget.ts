@@ -144,13 +144,12 @@ module alasch.cookbook.ui.views {
             this._recipe = new model.RecipeDTO();
             this._editRecipeSubtitle.hide();
             this._addRecipeSubtitle.hide();
-            this._section.on('focus', this.onFocus.bind(this));
         }
 
         showRecipe(recipe: alasch.cookbook.ui.model.RecipeDTO) {
             this._recipe = recipe;
-            //this.clearData(false);
-            //this.bindEditRecipeData();
+            this.clearData(false);
+            this.bindEditRecipeData();
             this._section.focus();
         }
 
@@ -158,18 +157,14 @@ module alasch.cookbook.ui.views {
             this.clearData(true);
         }
 
-        private onFocus(eventObject: Event) {
-            if (this._recipe) {
+        private onClickClearButton(): void {
+            if (!this._recipe) {
+                this.clearData(true);
+            }
+            else {
                 this.clearData(false);
                 this.bindEditRecipeData();
             }
-            else {
-                this.clearData(true);
-            }
-        }
-
-        private onClickClearButton(): void {
-            this.clearData(true);
         }
 
         private onClickSaveButton(): void {
@@ -203,11 +198,16 @@ module alasch.cookbook.ui.views {
         }
 
         private isValidInput(recipe: alasch.cookbook.ui.model.RecipeDTO) : boolean {
+            var errorElementClass: string = 'has-error';
             if (recipe.name.length==0) {
                 logger.error("Invalid recipe data: name is empty");
-                this._recipeNameInput.parent('.form-group').addClass('has-error');
+                this._recipeNameInput.parent('.form-group').addClass(errorElementClass);
                 this._emptyNameError.show();
                 return false;
+            }
+            else {
+                this._recipeNameInput.parent('.form-group').removeClass(errorElementClass);
+                this._emptyNameError.hide();
             }
             return true;
         }
@@ -226,6 +226,7 @@ module alasch.cookbook.ui.views {
             }
             ModalDialogsHandler.showOperationResult(operationResultId);
             this._appEventListener.notify(appEvent);
+            this.clearData(true);
         }
 
         private onSaveError(errCode?: any) : void {
