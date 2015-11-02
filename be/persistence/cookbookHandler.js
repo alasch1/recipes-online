@@ -6,7 +6,9 @@ var logfactory = require('../utils/logger')(module);
 var logger = logfactory.createLogger();
 var util = require('util');
 var uuid = require('node-uuid');
+var _ =  require('lodash');
 var model = require('./model/DTO');
+var cookbookLookup = require('./cookbookLookup');
 
 // temporary
 var cookbooks = require('../mocks/cookbookMock');
@@ -18,13 +20,21 @@ function CookbookHandler() {
 
     this.defaultCuisine="????";
 
+    //============================================
+    // Cookbook methods
+    //============================================
+
     this.getCoookbook = function() {
         return this.cookbook;
     }
 
+    //============================================
+    // Recipe methods
+    //============================================
+
     this.getRecipe = function(recipeId) {
         logger.debug("received %s", recipeId);
-        var recipe = this.getCookbookRecipe(this.cookbook, recipeId);
+        var recipe = cookbookLookup.recipeAtCookbook(this.cookbook, recipeId);
         if (recipe) {
             logger.debug("Found in cookbook " + JSON.stringify(recipe));
         }
@@ -63,52 +73,30 @@ function CookbookHandler() {
         return result;
     }
 
-    // Get stuff
-    this.getCookbookCuisine = function(cookbook, cuisineName) {
-        var cuisine = null;
-        cookbook.cuisines.forEach(function(element, index, array) {
-            logger.debug("Current ", element.name);
-            if (element.name == cuisineName) {
-                logger.debug("Matching given ", cuisineName);
-                cuisine = element;
-            }
-        })
-        return cuisine;
+    //============================================
+    // Cuisine methods
+    //============================================
+
+    this.getCuisine = function(cuisineId) {
+        return cookbookLookup.cuisineAtCookbook(this.cookbook, cuisineId);
     }
 
-    this.getCookbookRecipe = function(cookbook, recipeId) {
-        var recipe = null;
-        cookbook.cuisines.forEach(function(cuisine, i, array) {
-            var found = this.getCuisineRecipe(cuisine, recipeId);
-            if (found) {
-                logger.debug("recipe id:%s found in cuisine:%s", recipeId, cuisine.name);
-                recipe = found;
-            }
-        }.bind(this));
-        return recipe;
+    this.deleteCuisine = function(cuisineId) {
+        logger.debug("Deleting cuisine by id:%s", cuisineId);
+        var result =  this.deleteCuisine4Cookbook(this.cookbook, cuisineId);
+        if (result) {
+            logger.debug("Cuisine was deleted");
+        }
+        else {
+            logger.error('Failed to delete cuisine by id:%s; probably it is not empty', cuisineId);
+        }
+        return result;
     }
 
-    this.getCuisineRecipe = function(cuisine, recipeId) {
-        var recipe = null;
-        cuisine.recipes.forEach(function(current, i, recipes) {
-            if (current.id === recipeId) {
-                recipe = current;
-            }
-        });
-        return recipe;
-    }
-
-    this.getCuisineRecipeIndex = function(cuisine, recipeId) {
-        var recipe = null;
-        for (var i = 0; i< cuisine.recipes.length; i++) {
-            if (cuisine.recipes[i].id === recipeId) {
-                return i;
-            }
-        };
-        return -1;
-    }
-
+    //============================================
     // Add stuff
+    //============================================
+
     this.addCuisine2Cookbook = function(cookbook, cuisineName) {
         var cuisine = new model.Cuisine(cuisineName);
         cuisine.id = "cu-" + uuid.v1();
@@ -132,7 +120,7 @@ function CookbookHandler() {
 
     this.addCuisineAndRecipe2Cookbook = function(cookbook, cuisineName, recipe) {
         logger.debug("Adding to cuisine:%s recipe:%s", cuisineName, JSON.stringify(recipe));
-        var cuisine = this.getCookbookCuisine(cookbook, cuisineName);
+        var cuisine = cookbookLookup.cuisineAtCookbookByName(cookbook, cuisineName);
         if (!cuisine) {
             cuisine = this.addCuisine2Cookbook(cookbook, cuisineName);
         }
@@ -148,11 +136,34 @@ function CookbookHandler() {
         cuisine.recipes.push(recipe);
     }
 
+    //============================================
     // Delete stuff
+    //============================================
+
+    this.deleteCuisine4Cookbook = function(cookbook, cuisineId) {
+        var cuisine = cookbookLookup.cuisineAtCookbook(cookbook, cuisineId);
+        if (cuisine && cuisine.recipes.length==0) {
+            var cuisineIndex = cookbookLookup.cuisineIndexAtCookbook(cookbook, cuisine);
+            if (cuisineIndex != -1) {
+                if ((cookbook.cuisines.splice(cuisineIndex)).length==1) {
+                    logger.info("Empty cuisine %s was deleted from cookbook", cuisineId);
+                    return true;
+                }
+            }
+            else {
+                logger.error("Index of %s was not found in the cookbook", cuisineId);
+            }
+        }
+        else {
+            logger.error("Cannot delete not empty cuisine", cuisineId);
+        }
+        return false;
+    }
+
     this.deleteRecipe4Cookbook = function(cookbook, recipeId) {
-        var recipe = this.getCookbookRecipe(cookbook, recipeId);
+        var recipe = cookbookLookup.recipeAtCookbook(cookbook, recipeId);
         if (recipe) {
-            var cuisine = this.getCookbookCuisine(cookbook, recipe.cuisine);
+            var cuisine = cookbookLookup.cuisineAtCookbookByName(cookbook, recipe.cuisine);
             this.deleteRecipe4Cuisine(cuisine, recipe);
             return true;
         }
@@ -160,7 +171,7 @@ function CookbookHandler() {
     }
 
     this.deleteRecipe4Cuisine = function(cuisine, recipe) {
-        var i = cuisine.recipes.indexOf(recipe);
+        var i = cookbookLookup.recipeIndexAtCuisine(cuisine, recipe.id);
         if (i > -1) {
             logger.debug("Removing recipe:%s with index:%s from %s", recipe.id, i, cuisine.name);
             cuisine.recipes.splice(i, 1);
@@ -171,28 +182,31 @@ function CookbookHandler() {
     }
 
     this.deleteRecipe4CuisineById = function(cuisine, recipeId) {
-        var i = this.getCuisineRecipeIndex(cuisine, recipeId);
+        var i = cookbookLookup.recipeIndexAtCuisine(cuisine, recipeId);
         if (i > -1) {
             cuisine.recipes.splice(i, 1);
         }
     }
 
+    //============================================
     // Update stuff
+    //============================================
+
     this.updateCookbookRecipe = function(cookbook, recipe) {
         logger.debug("Updating recipe "+ JSON.stringify(recipe));
-        var oldRecipe = this.getCookbookRecipe(cookbook, recipe.id);
+        var oldRecipe = cookbookLookup.recipeAtCookbook(cookbook, recipe.id);
         if (!oldRecipe){
             logger.debug("Recipe does not exist");
             return false;
         }
         else {
             if (oldRecipe.cuisine === recipe.cuisine) {
-                var cuisine = this.getCookbookCuisine(cookbook, recipe.cuisine);
+                var cuisine = cookbookLookup.cuisineAtCookbookByName(cookbook, recipe.cuisine);
                 logger.debug("Replace recipe:%s of cuisine:%s", recipe.name, recipe.cuisine);
                 this.replaceCuisineRecipe(cuisine, recipe);
             }
             else {
-                var oldCuisine = this.getCookbookCuisine(cookbook, oldRecipe.cuisine);
+                var oldCuisine = cookbookLookup.cuisineAtCookbookByName(cookbook, oldRecipe.cuisine);
                 this.deleteRecipe4Cuisine(oldCuisine, recipe);
                 logger.debug("Move recipe:% from cuisine:%s to cuisine:%s",
                     recipe.name, oldRecipe.cuisine, recipe.cuisine);
@@ -213,16 +227,38 @@ var handler = new CookbookHandler();
 
 module.exports = handler;
 
-// Tests
-function testGetRecipe(content) {
+//=====================================================
+// Temporary tests are here
+//=====================================================
+
+function testGetRecipe() {
     var recipe = handler.getRecipe('re-1');
     console.log('>>>>>> Here is a recipe', JSON.stringify(recipe));
 }
 
+function testLookup(cookbook) {
+    var cuisineId = 'cu-4';
+    var recipeId = 're-3';
+
+    var cuisine = cookbookLookup.cuisineAtCookbook(cookbook, cuisineId);
+    console.log('*** Found a cuisine', JSON.stringify(cuisine));
+
+    var cuisineIndex = cookbookLookup.cuisineIndexAtCookbook(cookbook, cuisine.id);
+    console.log('*** Received cuisine index:', cuisineIndex);
+
+    var recipe = cookbookLookup.recipeAtCookbook(cookbook, recipeId);
+    console.log('*** Found a recipe', JSON.stringify(recipe));
+
+    var recipeIndex = cookbookLookup.recipeIndexAtCuisine(cuisine, recipeId);
+    console.log('*** Received recipe index %d in cuisine:%s', recipeIndex, cuisine.name);
+}
+
 (function test() {
     var content = handler.getCoookbook();
-    console.log('>>>>>> Here is a content', JSON.stringify(content));
+    //console.log('>>>>>> Here is a content', JSON.stringify(content));
 
-    testGetRecipe(content);
+    testGetRecipe();
+
+    testLookup(content);
 
 })();
