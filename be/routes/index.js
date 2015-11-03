@@ -1,7 +1,4 @@
-var express = require('express');
-var router = express.Router();
-var logfactory = require('../utils/logger')(module);
-var logger = logfactory.createLogger();
+var router = require('express').Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {

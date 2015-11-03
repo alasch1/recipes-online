@@ -7,7 +7,6 @@ var bodyParser = require('body-parser');
 // api
 var index = require('./routes/index');
 var content = require('./routes/content');
-var recipe = require('./routes/recipe');
 
 var helpers = require('./utils/helpers');
 var app = express();
@@ -60,7 +59,7 @@ app.use(expressWinstonLog);
 app.use('/', index);
 app.use('/cookbook', index);
 app.use('/content', content);
-app.use('/recipe', recipe);
+app.use('/recipe', require('./routes/recipe'));
 app.use('/cuisine', require('./routes/cuisine'));
 
 // Place the express-winston errorLogger after the router.

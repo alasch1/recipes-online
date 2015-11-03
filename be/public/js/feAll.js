@@ -1419,7 +1419,7 @@ var alasch;
 /// <reference path="../ViewRecipeWidget.ts" />
 /// <reference path="../EditRecipeWidget.ts" />
 /// <reference path="../ModalDialog.ts" />
-/// <reference path="./Helpers.ts" />
+/// <reference path="./ElementsHandlers.ts" />
 /// <reference path="./Selectors.ts" />
 var alasch;
 (function (alasch) {

@@ -9,7 +9,7 @@
 /// <reference path="../ViewRecipeWidget.ts" />
 /// <reference path="../EditRecipeWidget.ts" />
 /// <reference path="../ModalDialog.ts" />
-/// <reference path="./Helpers.ts" />
+/// <reference path="./ElementsHandlers.ts" />
 /// <reference path="./Selectors.ts" />
 
 module alasch.cookbook.ui.views.content {
