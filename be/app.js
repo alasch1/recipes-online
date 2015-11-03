@@ -61,7 +61,7 @@ app.use('/', index);
 app.use('/cookbook', index);
 app.use('/content', content);
 app.use('/recipe', recipe);
-//app.use(logEnd);
+app.use('/cuisine', require('./routes/cuisine'));
 
 // Place the express-winston errorLogger after the router.
 app.use(expressWinstonLog);

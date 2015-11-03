@@ -15,6 +15,7 @@ module alasch.cookbook.ui.http {
         static _rootPath: string ='';
         static _contentPath: string = 'content';
         static _recipePath: string = 'recipe';
+        static _cuisinePath: string = 'cuisine';
 
         private _proxy: WebServiceProxy;
 
@@ -54,6 +55,12 @@ module alasch.cookbook.ui.http {
 
         deleteRecipe<T>(recipeId:string, successCallback:()=>void, errorCallback:(errorStatus?: number)=>void) {
             var route = CookbookServiceProxy._recipePath + "/" + recipeId;
+            var request = new CookbookRequest(null, HttpMethod.DELETE, route);
+            this.invokeRequest(request, successCallback, errorCallback);
+        }
+
+        deleteCuisine<T>(cuisineId:string, successCallback:()=>void, errorCallback:(errorStatus?: number)=>void) {
+            var route = CookbookServiceProxy._cuisinePath + "/" + cuisineId;
             var request = new CookbookRequest(null, HttpMethod.DELETE, route);
             this.invokeRequest(request, successCallback, errorCallback);
         }

@@ -102,8 +102,10 @@ module alasch.cookbook.ui.views.content {
         }
 
         deleteCuisine(cuisineId: string) {
-            // temporary
-            this.onDeleteError();
+            this._cbkServiceProxy.deleteCuisine(
+                cuisineId,
+                this.onDeleteSuccess.bind(this),
+                this.onDeleteError.bind(this));
         }
 
         private clearContent() {

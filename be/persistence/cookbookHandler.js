@@ -143,9 +143,10 @@ function CookbookHandler() {
     this.deleteCuisine4Cookbook = function(cookbook, cuisineId) {
         var cuisine = cookbookLookup.cuisineAtCookbook(cookbook, cuisineId);
         if (cuisine && cuisine.recipes.length==0) {
-            var cuisineIndex = cookbookLookup.cuisineIndexAtCookbook(cookbook, cuisine);
+            var cuisineIndex = cookbookLookup.cuisineIndexAtCookbook(cookbook, cuisineId);
             if (cuisineIndex != -1) {
-                if ((cookbook.cuisines.splice(cuisineIndex)).length==1) {
+                var deleted = cookbook.cuisines.splice(cuisineIndex, 1);
+                if (deleted.length === 1) {
                     logger.info("Empty cuisine %s was deleted from cookbook", cuisineId);
                     return true;
                 }

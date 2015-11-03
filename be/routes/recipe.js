@@ -1,8 +1,7 @@
 /**
  * Created by aschneider on 10/18/2015.
  */
-var express = require('express');
-var router = express.Router();
+var router = require('express').Router();
 var logfactory = require('../utils/logger')(module);
 var logger = logfactory.createLogger();
 var cookbookHandler = require('../persistence/cookbookHandler');
@@ -86,6 +85,6 @@ var updateRecipe = function(req, res) {
 
 var deleteRecipe = function(req, res) {
     cookbookHandler.deleteRecipe(req.params.recipeId);
-    logger.info('deleted recipe');
+    logger.info('recipe %s was deleted', req.params.recipeId);
     res.sendStatus(200);
 }

@@ -414,6 +414,11 @@ var alasch;
                         var request = new http.CookbookRequest(null, 3 /* DELETE */, route);
                         this.invokeRequest(request, successCallback, errorCallback);
                     };
+                    CookbookServiceProxy.prototype.deleteCuisine = function (cuisineId, successCallback, errorCallback) {
+                        var route = CookbookServiceProxy._cuisinePath + "/" + cuisineId;
+                        var request = new http.CookbookRequest(null, 3 /* DELETE */, route);
+                        this.invokeRequest(request, successCallback, errorCallback);
+                    };
                     CookbookServiceProxy.prototype.invokeRequest = function (request, successCallback, errorCallback) {
                         try {
                             logger.info('Invoked request input:' + request.toString());
@@ -468,6 +473,7 @@ var alasch;
                     CookbookServiceProxy._rootPath = '';
                     CookbookServiceProxy._contentPath = 'content';
                     CookbookServiceProxy._recipePath = 'recipe';
+                    CookbookServiceProxy._cuisinePath = 'cuisine';
                     return CookbookServiceProxy;
                 })();
                 http.CookbookServiceProxy = CookbookServiceProxy;
@@ -1494,8 +1500,7 @@ var alasch;
                             this._cbkServiceProxy.deleteRecipe(recipe.id, this.onDeleteSuccess.bind(this), this.onDeleteError.bind(this));
                         };
                         ContentWidget.prototype.deleteCuisine = function (cuisineId) {
-                            // temporary
-                            this.onDeleteError();
+                            this._cbkServiceProxy.deleteCuisine(cuisineId, this.onDeleteSuccess.bind(this), this.onDeleteError.bind(this));
                         };
                         ContentWidget.prototype.clearContent = function () {
                             this._contentTable.empty();
