@@ -1,6 +1,11 @@
 [
   {
     "id": "cb-1",
+    "name": "מתכונים של ריקי",
+    "cuisines": []
+  },
+  {
+    "id": "cb-2",
     "name": "ala's cookbook",
     "cuisines": [
       {

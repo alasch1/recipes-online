@@ -5,10 +5,21 @@
 var logfactory = require('../utils/logger')(module);
 var logger = logfactory.createLogger();
 var _ =  require('lodash');
-var model = require('./model/DTO');
 
 function CookbookLookUp() {
-    // Cookbook entry point
+
+    this.cookbook = function(cookbooks, cookbookId) {
+        return _.find(cookbooks,{'id' : cookbookId});
+    }
+
+    this.cookbookByName = function(cookbooks, cookbookName) {
+        return _.find(cookbooks,{'name' : cookbookName});
+    }
+
+    this.cookbookIndex = function(cookbooks, cookbookId) {
+        return _.findIndex(cookbooks,{'id' : cookbookId});
+    }
+
     this.cuisineAtCookbook = function(cookbook, cuisineId) {
         return _.find(cookbook.cuisines,{'id' : cuisineId});
     }

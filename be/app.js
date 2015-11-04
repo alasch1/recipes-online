@@ -3,6 +3,7 @@ var path = require('path');
 var favicon = require('serve-favicon');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var httpCodes = require('./constants/httpCodes');
 
 // api
 var index = require('./routes/index');
@@ -56,10 +57,9 @@ app.use(logStart);
 app.use(expressWinstonLog);
 
 app.use('/', index);
-app.use('/cookbook', index);
-app.use('/content', require('./routes/cookbook'));
-app.use('/recipe', require('./routes/recipe'));
-app.use('/cuisine', require('./routes/cuisine'));
+app.use('/cookbook', require('./routes/cookbook'));
+//app.use('/recipe', require('./routes/recipe'));
+//app.use('/cuisine', require('./routes/cuisine'));
 
 // Place the express-winston errorLogger after the router.
 app.use(expressWinstonLog);
@@ -76,7 +76,7 @@ app.locals.cookbookData = require('./cookbookData.json');
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
-  err.status = 404;
+  err.status = httpCodes.NOT_FOUND;
   next(err);
 });
 
@@ -86,7 +86,7 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
+    res.status(err.status || httpCodes.INTERNAL_SERVER_ERROR);
     res.render('pages/error', {
       message: err.message,
       error: err
@@ -97,7 +97,7 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
+  res.status(err.status || httpCodes.INTERNAL_SERVER_ERROR);
   res.render('pages/error', {
     message: err.message,
     error: {}
