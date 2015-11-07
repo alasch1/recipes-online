@@ -13,7 +13,7 @@ module alasch.cookbook.ui.http {
 
         // URLS
         static _rootPath: string ='';
-        static _contentPath: string = 'content';
+        static _cookbookPath: string = 'cookbook';
         static _recipePath: string = 'recipe';
         static _cuisinePath: string = 'cuisine';
 
@@ -27,47 +27,67 @@ module alasch.cookbook.ui.http {
             this._proxy.rootUrl = CookbookServiceProxy._rootPath;
         }
 
-        getCookbookContent<T>(successCallback:(data:alasch.cookbook.ui.model.CuisineDTO[])=>void,
-                              errorCallback:(errorStatus?: number)=>void) {
-            var route = CookbookServiceProxy._contentPath;
+        getCookbooks<T>(onSuccess:(data: model.CookbookDTO[])=> void, onError:(errorStatus?: number)=>void) {
+            var request = new CookbookRequest(null, HttpMethod.GET, CookbookServiceProxy._cookbookPath);
+            this.invokeRequest(request, onSuccess, onError);
+        }
+
+        getCookbookContent<T>(cookbookId: string, onSuccess:(data: model.CuisineDTO[])=>void,
+                              onError:(errorStatus?: number)=>void) {
+            var route = this.buildCookbookIdUrl(cookbookId);
             var request = new CookbookRequest(null, HttpMethod.GET, route);
-            this.invokeRequest(request, successCallback, errorCallback);
+            this.invokeRequest(request, onSuccess, onError);
         }
 
-        addRecipe<T>(input, successCallback:()=>void, errorCallback:(errorStatus?: any)=>void) {
-            var route = CookbookServiceProxy._recipePath;
+        addRecipe<T>(cookbookId: string, input, onSuccess:()=>void, onError:(errorStatus?: any)=>void) {
+            var route = this.buildRecipeUrl(cookbookId);
             var request = new CookbookRequest(input, HttpMethod.POST, route);
-            this.invokeRequest(request, successCallback, errorCallback);
+            this.invokeRequest(request, onSuccess, onError);
         }
 
-        updateRecipe<T>(input, successCallback:()=>void, errorCallback:(errorStatus?: any)=>void) {
-            var route = CookbookServiceProxy._recipePath  + "/" + input.id;
+        updateRecipe<T>(cookbookId: string, input, onSuccess:()=>void, onError:(errorStatus?: any)=>void) {
+            var route = this.buildRecipeIdUrl(cookbookId,input.id);
             var request = new CookbookRequest(input, HttpMethod.PUT, route);
-            this.invokeRequest(request, successCallback, errorCallback);
+            this.invokeRequest(request, onSuccess, onError);
         }
 
-
-        getRecipe<T>(recipeId:string, successCallback:()=>void, errorCallback:(errorStatus?: number)=>void) {
-            var route = CookbookServiceProxy._recipePath + "/" + recipeId;
+        getRecipe<T>(cookbookId: string, recipeId:string, onSuccess:()=>void, onError:(errorStatus?: number)=>void) {
+            var route = this.buildRecipeIdUrl(cookbookId,recipeId);
             var request = new CookbookRequest(null, HttpMethod.PUT, route);
-            this.invokeRequest(request, successCallback, errorCallback);
+            this.invokeRequest(request, onSuccess, onError);
         }
 
-        deleteRecipe<T>(recipeId:string, successCallback:()=>void, errorCallback:(errorStatus?: number)=>void) {
-            var route = CookbookServiceProxy._recipePath + "/" + recipeId;
+        deleteRecipe<T>(cookbookId: string, recipeId:string, onSuccess:()=>void, onError:(errorStatus?: number)=>void) {
+            var route = this.buildRecipeIdUrl(cookbookId,recipeId);
             var request = new CookbookRequest(null, HttpMethod.DELETE, route);
-            this.invokeRequest(request, successCallback, errorCallback);
+            this.invokeRequest(request, onSuccess, onError);
         }
 
-        deleteCuisine<T>(cuisineId:string, successCallback:()=>void, errorCallback:(errorStatus?: number)=>void) {
-            var route = CookbookServiceProxy._cuisinePath + "/" + cuisineId;
+        deleteCuisine<T>(cookbookId: string, cuisineId:string, onSuccess:()=>void, onError:(errorStatus?: number)=>void) {
+            var route = this.buildCuisineIdUrl(cookbookId,cuisineId);
             var request = new CookbookRequest(null, HttpMethod.DELETE, route);
-            this.invokeRequest(request, successCallback, errorCallback);
+            this.invokeRequest(request, onSuccess, onError);
+        }
+
+        private buildCookbookIdUrl(cookbookId: string): string {
+            return CookbookServiceProxy._cookbookPath + "/" + cookbookId;
+        }
+
+        private buildRecipeUrl(cookbookId: string): string {
+            return  this.buildCookbookIdUrl(cookbookId) + "/" + CookbookServiceProxy._recipePath;
+        }
+
+        private buildCuisineIdUrl(cookbookId: string, cuisineId: string) {
+            return this.buildCookbookIdUrl(cookbookId) + "/" + CookbookServiceProxy._cuisinePath + "/" + cuisineId;
+        }
+
+        private buildRecipeIdUrl(cookbookId: string, recipeId: string): string {
+            return  this.buildRecipeUrl(cookbookId) + "/" + recipeId;
         }
 
         private invokeRequest<T>(request:CookbookRequest<T>,
-                                 successCallback:(data:T)=>void,
-                                 errorCallback:(errorStatus?: number)=>void) {
+                                 onSuccess:(data:T)=>void,
+                                 onError:(errorStatus?: number)=>void) {
             try {
                 logger.info('Invoked request input:' + request.toString());
                 request.validate();
@@ -79,31 +99,31 @@ module alasch.cookbook.ui.http {
 
                 logger.info("[TO CBK] - Sending request" + request.toString());
                 this._proxy.invokeAsync(wsRequest, function (result) {
-                        CookbookServiceProxy.onSuccess(request, result, successCallback, errorCallback);
+                        CookbookServiceProxy.onSuccess(request, result, onSuccess, onError);
                     },
                     function (result) {
-                        CookbookServiceProxy.onError(request, result, errorCallback)
+                        CookbookServiceProxy.onError(request, result, onError)
                     })
             }
             catch (e) {
-                if (errorCallback != null)
-                    errorCallback();
+                if (onError != null)
+                    onError();
             }
         }
 
         static onSuccess<T1, T2>(request: CookbookRequest<T1>,
                             result: WebServiceResponse<T2>,
-                            successCallback:(data?:T2)=>void,
-                            errorCallback:(errorStatus?: number)=>void) {
+                            onSuccessCB:(data?:T2)=>void,
+                            onErrorCB:(errorStatus?: number)=>void) {
             if (result.statusCode === 200 || result.statusCode === 201) {
                 logger.info("[FROM CBK] - Recieved OK result - " + CookbookServiceProxy.toStringResultBody(result));
-                if (successCallback != null) {
-                    successCallback(<T2>result.returnValue);
+                if (onSuccessCB != null) {
+                    onSuccessCB(<T2>result.returnValue);
                 }
             }
-            else if (errorCallback != null) {
+            else if (onErrorCB != null) {
                 logger.error("[FROM CBK] - Recieved failure result - " + CookbookServiceProxy.toStringResultBody(result));
-                errorCallback(result.statusCode);
+                onErrorCB(result.statusCode);
             }
             else {
                 logger.error("[FROM CBK] - Recieved failure result - " + CookbookServiceProxy.toStringResultBody(result) +
@@ -120,11 +140,11 @@ module alasch.cookbook.ui.http {
             }
         }
 
-        static onError<T>(request: CookbookRequest<T>,  result: WebServiceResponse<T>, errorCallback:(errorStatus: number)=>void) {
+        static onError<T>(request: CookbookRequest<T>,  result: WebServiceResponse<T>, onErrorCB:(errorStatus: number)=>void) {
             logger.error("[FROM CBK] - Recieved failure result:" + CookbookServiceProxy.toStringResultBody(result));
             //var rsvpResponse = <CookbookResponse<T>>JSON.parse(result.responseText);
-            if (errorCallback != null) {
-                errorCallback(result.statusCode);
+            if (onErrorCB != null) {
+                onErrorCB(result.statusCode);
             }
         }
     }

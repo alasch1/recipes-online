@@ -111,12 +111,17 @@ module alasch.cookbook.ui.views {
         private _saveBtn: JQuery;
         private _clearBtn: JQuery;
         private _addIngredRowsBtn: JQuery;
-        private _recipe: alasch.cookbook.ui.model.RecipeDTO;
+        private _cookbookId: string;
+        private _recipe: model.RecipeDTO;
         private _ingredTableHandler: IngredTableHandler;
         private _emptyNameError: JQuery;// = $('#recipe-name-input-id').siblings('.help-block');
 
         static editRecipe(recipe: model.RecipeDTO): void {
             EditRecipeWidget.singleton.showRecipe(recipe);
+        }
+
+        static setCookbookId(cookbookId: string) {
+            EditRecipeWidget.singleton._cookbookId = cookbookId;
         }
 
         constructor(appEventListener: AppEventListener, cbkServiceProxy: http.CookbookServiceProxy) {
@@ -184,12 +189,14 @@ module alasch.cookbook.ui.views {
                 // check here, if recipe has an id - for edit
                 if (!recipe.id || recipe.id==="") {
                     this._cbkServiceProxy.addRecipe(
+                        this._cookbookId,
                         recipe,
                         this.onSaveSuccess.bind(this),
                         this.onSaveError.bind(this));
                 }
                 else {
                     this._cbkServiceProxy.updateRecipe(
+                        this._cookbookId,
                         recipe,
                         this.onSaveSuccess.bind(this),
                         this.onSaveError.bind(this));

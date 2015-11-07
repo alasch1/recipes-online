@@ -30,7 +30,7 @@ module alasch.cookbook.ui.views.content {
     var DELETE_CUISINE_BTN_SELECTOR = '.delete-cuisine-btn-js';
 
     class CuisineGrid extends alasch.cookbook.ui.utils.Grid<model.RecipeDTO>{
-        _name ; string;
+        _name: string;
 
         constructor(name: string, container: JQuery) {
             super(RECIPE_TEMPLATE_SELECTOR, container);
@@ -40,6 +40,9 @@ module alasch.cookbook.ui.views.content {
 
     export class ContentWidget extends BaseWidget {
 
+        private static singleton: ContentWidget;
+
+        _cookbook: model.CookbookDTO;
         _cuisinesList: JQuery;
         _contentTable: JQuery;
         _cuisinesListGrid: alasch.cookbook.ui.utils.Grid<model.CuisineDTO>;
@@ -48,6 +51,7 @@ module alasch.cookbook.ui.views.content {
 
         constructor(cbkServiceProxy: alasch.cookbook.ui.http.CookbookServiceProxy) {
             super(CONTENT_TABLE_SELECTOR, null, cbkServiceProxy);
+            ContentWidget.singleton = this;
             this._cuisinesList = $(CUISINE_LIST_SELECTOR);
             this._contentTable = $(CONTENT_TABLE_SELECTOR);
             this._cuisinesListGrid =  new alasch.cookbook.ui.utils.Grid<model.CuisineDTO>(DATALIST_OPTION_SELECTOR, this._cuisinesList);
@@ -65,6 +69,21 @@ module alasch.cookbook.ui.views.content {
             this._element.on('click', DELETE_CUISINE_BTN_SELECTOR, ElementsClickHandler.onClickCuisineDeleteBtn);
         }
 
+        static readCookbook(cookbook: model.CookbookDTO) {
+            ContentWidget.singleton._cookbook = cookbook;
+            ContentWidget.singleton.readContent();
+        }
+
+        static getCookbookId() : string {
+            return ContentWidget.singleton._cookbook.id;
+        }
+
+        readContent(): void {
+            // bring data for templates init
+            logger.info("Reading content...");
+            this._cbkServiceProxy.getCookbookContent(this._cookbook.id, this.onReadContentSuccess.bind(this), this.onReadContentError.bind(this));
+        }
+
         /**
          * Handles application events, fires in the other widgets
          * @param appEventTag
@@ -77,17 +96,12 @@ module alasch.cookbook.ui.views.content {
             }
         }
 
-        readContent():void {
-            // bring data for templates init
-            logger.info("Reading content...");
-            this._cbkServiceProxy.getCookbookContent(this.onReadContentSuccess.bind(this), this.onReadContentError.bind(this));
-        }
-
         onReadContentSuccess(contentData: alasch.cookbook.ui.model.CuisineDTO[]) {
             logger.info("Recieved content:" + JSON.stringify(contentData));
             this.clearContent();
             this.initCuisineList(contentData);
             this.initContent(contentData);
+            EditRecipeWidget.setCookbookId(this._cookbook.id);
         }
 
         onReadContentError(errorCode: number) {
@@ -96,6 +110,7 @@ module alasch.cookbook.ui.views.content {
 
         deleteRecipe(recipe: model.RecipeDTO) {
             this._cbkServiceProxy.deleteRecipe(
+                this._cookbook.id,
                 recipe.id,
                 this.onDeleteSuccess.bind(this),
                 this.onDeleteError.bind(this));
@@ -103,6 +118,7 @@ module alasch.cookbook.ui.views.content {
 
         deleteCuisine(cuisineId: string) {
             this._cbkServiceProxy.deleteCuisine(
+                this._cookbook.id,
                 cuisineId,
                 this.onDeleteSuccess.bind(this),
                 this.onDeleteError.bind(this));
@@ -138,7 +154,7 @@ module alasch.cookbook.ui.views.content {
             var cuisineRef = cuisineElement.find(Selectors.CUISINE_NAME_JS_SELECTOR);
             var deleteBtn = cuisineElement.find(DELETE_CUISINE_BTN_SELECTOR);
             cuisineRef.text(data.name);
-            cuisineRef.attr('id', '' + data.id);
+            cuisineRef.attr('id', data.id);
             cuisineRef.get(0)[Selectors.CUISINE_DATA_PROPERTY] = data.id;
             if (data.recipes.length > 0) {
                 // No delete for cuisine with recipes

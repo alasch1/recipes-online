@@ -4,6 +4,7 @@
 
 /// <reference path="./definitions/jquery.d.ts" />
 /// <reference path="./views/BaseWidget.ts" />
+/// <reference path="./views/CookbooksWidget.ts" />
 /// <reference path="./views/content/ContentWidget.ts" />
 /// <reference path="./views/ViewRecipeWidget.ts" />
 /// <reference path="./views/EditRecipeWidget.ts" />
@@ -19,6 +20,7 @@ module alasch.cookbook.ui {
     var logger:alasch.cookbook.ui.utils.Logger = alasch.cookbook.ui.utils.LoggerFactory.getLogger('AppClientMain');
 
     export class AppClientMain {
+        _cookbooksWidget: views.CookbooksWidget;
         _contentWidget: views.content.ContentWidget;
         _viewRecipesWidget: views.ViewRecipeWidget;
         _editRecipeWidget: views.EditRecipeWidget;
@@ -29,8 +31,10 @@ module alasch.cookbook.ui {
         constructor() {
             this._cbkServiceProxy = new http.CookbookServiceProxy();
             this._contentWidget = new views.content.ContentWidget(this._cbkServiceProxy);
+            this._cookbooksWidget = new views.CookbooksWidget(this._cbkServiceProxy);
             this._traceConsole = new utils.TraceConsole();
             this._viewRecipesWidget = views.ViewRecipeWidget.getInstance();
+            this.createCookbooksWidget();
             this.createEditRecipeWidget();
         }
 
@@ -41,7 +45,8 @@ module alasch.cookbook.ui {
         }
 
         private initJQueryElements() {
-            this._contentWidget.readContent();
+            this._cookbooksWidget.readCookbooks();
+            //this._contentWidget.readContent();
             this._editRecipeWidget.init();
             this._traceConsole.hide();
             this._navBar = $(utils.Helpers.idSelector('li-add-recipe-id'));
@@ -52,6 +57,11 @@ module alasch.cookbook.ui {
             var appEventListener: views.AppEventListener = new views.AppEventListener();
             appEventListener.notify = this._contentWidget.onAppEvent.bind(this._contentWidget);
             this._editRecipeWidget = new views.EditRecipeWidget(appEventListener, this._cbkServiceProxy);
+        }
+
+        private createCookbooksWidget() {
+            var appEventListener: views.AppEventListener = new views.AppEventListener();
+            appEventListener.notify = this._contentWidget.onAppEvent.bind(this._contentWidget);
         }
 
         private onClick() {

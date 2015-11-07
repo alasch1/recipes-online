@@ -125,8 +125,8 @@ module alasch.cookbook.ui.views.content {
         static onClickCuisineDeleteBtn(eventObject: Event): void {
             var invokeDelete = function(eventObject: Event) {
                 logger.debug("Delete cuisine was invoked");
-                var cuisineRef = ElementsClickHandler.findCuisineRef($(eventObject.target));
-                var cuisineId = ElementsClickHandler.extractCuisineId(cuisineRef);
+                var cuisineRef:JQuery = ElementsClickHandler.findCuisineRef($(eventObject.target));
+                var cuisineId: string = ElementsClickHandler.extractCuisineId(cuisineRef);
                 if (cuisineId!=="") {
                     ElementsClickHandler._contentWidget.deleteCuisine.bind(ElementsClickHandler._contentWidget)(cuisineId);
                 }

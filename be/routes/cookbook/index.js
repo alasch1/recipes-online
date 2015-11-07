@@ -3,8 +3,8 @@
  */
 var router = require('express').Router();
 var cookbookController = require('./cookbook.controller');
-var cuisineController = require('../cuisine/cuisine.controller');
-var recipeController = require('../recipe/recipe.controller');
+var cuisineController = require('./cuisine.controller.js');
+var recipeController = require('./recipe.controller.js');
 
 var rootUrl='/';
 var cookbookIdUrl = rootUrl + ':cookbookId';
