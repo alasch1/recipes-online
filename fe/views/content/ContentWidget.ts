@@ -42,7 +42,7 @@ module alasch.cookbook.ui.views.content {
 
         private static singleton: ContentWidget;
 
-        _cookbook: model.CookbookDTO;
+        _cookbookId: string;
         _cuisinesList: JQuery;
         _contentTable: JQuery;
         _cuisinesListGrid: alasch.cookbook.ui.utils.Grid<model.CuisineDTO>;
@@ -52,6 +52,7 @@ module alasch.cookbook.ui.views.content {
         constructor(cbkServiceProxy: alasch.cookbook.ui.http.CookbookServiceProxy) {
             super(CONTENT_TABLE_SELECTOR, null, cbkServiceProxy);
             ContentWidget.singleton = this;
+            this._cookbookId = "";
             this._cuisinesList = $(CUISINE_LIST_SELECTOR);
             this._contentTable = $(CONTENT_TABLE_SELECTOR);
             this._cuisinesListGrid =  new alasch.cookbook.ui.utils.Grid<model.CuisineDTO>(DATALIST_OPTION_SELECTOR, this._cuisinesList);
@@ -69,19 +70,25 @@ module alasch.cookbook.ui.views.content {
             this._element.on('click', DELETE_CUISINE_BTN_SELECTOR, ElementsClickHandler.onClickCuisineDeleteBtn);
         }
 
+        setCookbookId(cookbookId: string) {
+            this._cookbookId = cookbookId;
+        }
+
         static readCookbook(cookbook: model.CookbookDTO) {
-            ContentWidget.singleton._cookbook = cookbook;
+            ContentWidget.singleton.setCookbookId(cookbook.id);
             ContentWidget.singleton.readContent();
         }
 
         static getCookbookId() : string {
-            return ContentWidget.singleton._cookbook.id;
+            return ContentWidget.singleton._cookbookId;
         }
 
         readContent(): void {
             // bring data for templates init
-            logger.info("Reading content...");
-            this._cbkServiceProxy.getCookbookContent(this._cookbook.id, this.onReadContentSuccess.bind(this), this.onReadContentError.bind(this));
+            if (this._cookbookId != "") {
+                logger.info("Reading content...");
+                this._cbkServiceProxy.getCookbookContent(this._cookbookId, this.onReadContentSuccess.bind(this), this.onReadContentError.bind(this));
+            }
         }
 
         /**
@@ -101,7 +108,7 @@ module alasch.cookbook.ui.views.content {
             this.clearContent();
             this.initCuisineList(contentData);
             this.initContent(contentData);
-            EditRecipeWidget.setCookbookId(this._cookbook.id);
+            EditRecipeWidget.setCookbookId(this._cookbookId);
         }
 
         onReadContentError(errorCode: number) {
@@ -110,7 +117,7 @@ module alasch.cookbook.ui.views.content {
 
         deleteRecipe(recipe: model.RecipeDTO) {
             this._cbkServiceProxy.deleteRecipe(
-                this._cookbook.id,
+                this._cookbookId,
                 recipe.id,
                 this.onDeleteSuccess.bind(this),
                 this.onDeleteError.bind(this));
@@ -118,7 +125,7 @@ module alasch.cookbook.ui.views.content {
 
         deleteCuisine(cuisineId: string) {
             this._cbkServiceProxy.deleteCuisine(
-                this._cookbook.id,
+                this._cookbookId,
                 cuisineId,
                 this.onDeleteSuccess.bind(this),
                 this.onDeleteError.bind(this));

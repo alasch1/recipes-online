@@ -8,6 +8,7 @@ var recipeController = require('./recipe.controller.js');
 
 var rootUrl='/';
 var cookbookIdUrl = rootUrl + ':cookbookId';
+var cookbookContentUrl = cookbookIdUrl + '/content';
 var cuisineRootUrl = cookbookIdUrl + "/cuisine"
 var cuisineIdUrl = cuisineRootUrl + '/:cuisineId';
 var recipeRootUrl = cookbookIdUrl + '/recipe';
@@ -16,7 +17,8 @@ var recipeIdUrl = recipeRootUrl + '/:recipeId';
 // Cookbook methods
 router.get(rootUrl, cookbookController.getCookbooks);
 router.post(rootUrl, cookbookController.createCookbook);
-router.get(cookbookIdUrl, cookbookController.getCookbookContent);
+router.get(cookbookIdUrl, cookbookController.openCookbook);
+router.get(cookbookContentUrl, cookbookController.getCookbookContent);
 router.put(cookbookIdUrl, cookbookController.renameCookbook);
 router.delete(cookbookIdUrl, cookbookController.deleteCookbook);
 

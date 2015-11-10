@@ -34,7 +34,7 @@ module alasch.cookbook.ui.http {
 
         getCookbookContent<T>(cookbookId: string, onSuccess:(data: model.CuisineDTO[])=>void,
                               onError:(errorStatus?: number)=>void) {
-            var route = this.buildCookbookIdUrl(cookbookId);
+            var route = this.buildCookbookIdUrl(cookbookId) + "/content";
             var request = new CookbookRequest(null, HttpMethod.GET, route);
             this.invokeRequest(request, onSuccess, onError);
         }

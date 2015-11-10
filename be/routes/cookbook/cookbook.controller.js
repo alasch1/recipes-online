@@ -25,6 +25,10 @@ exports.getCookbooks = function(req, res, next) {
     }
 }
 
+exports.openCookbook = function(req, res, next) {
+    res.render('pages/cookbookContent');
+}
+
 exports.createCookbook = function(req, res, next) {
     try {
         var cookbook = req.body;

@@ -394,7 +394,7 @@ var alasch;
                         this.invokeRequest(request, onSuccess, onError);
                     };
                     CookbookServiceProxy.prototype.getCookbookContent = function (cookbookId, onSuccess, onError) {
-                        var route = this.buildCookbookIdUrl(cookbookId);
+                        var route = this.buildCookbookIdUrl(cookbookId) + "/content";
                         var request = new http.CookbookRequest(null, 0 /* GET */, route);
                         this.invokeRequest(request, onSuccess, onError);
                     };
@@ -1477,6 +1477,7 @@ var alasch;
                         function ContentWidget(cbkServiceProxy) {
                             _super.call(this, CONTENT_TABLE_SELECTOR, null, cbkServiceProxy);
                             ContentWidget.singleton = this;
+                            this._cookbookId = "";
                             this._cuisinesList = $(CUISINE_LIST_SELECTOR);
                             this._contentTable = $(CONTENT_TABLE_SELECTOR);
                             this._cuisinesListGrid = new alasch.cookbook.ui.utils.Grid(DATALIST_OPTION_SELECTOR, this._cuisinesList);
@@ -1492,17 +1493,22 @@ var alasch;
                             this._element.on('mouseleave', content.Selectors.CUISINE_JS_SELECTOR, content.ElementsHoverHandler.onMouseLeaveCuisine);
                             this._element.on('click', DELETE_CUISINE_BTN_SELECTOR, content.ElementsClickHandler.onClickCuisineDeleteBtn);
                         }
+                        ContentWidget.prototype.setCookbookId = function (cookbookId) {
+                            this._cookbookId = cookbookId;
+                        };
                         ContentWidget.readCookbook = function (cookbook) {
-                            ContentWidget.singleton._cookbook = cookbook;
+                            ContentWidget.singleton.setCookbookId(cookbook.id);
                             ContentWidget.singleton.readContent();
                         };
                         ContentWidget.getCookbookId = function () {
-                            return ContentWidget.singleton._cookbook.id;
+                            return ContentWidget.singleton._cookbookId;
                         };
                         ContentWidget.prototype.readContent = function () {
                             // bring data for templates init
-                            logger.info("Reading content...");
-                            this._cbkServiceProxy.getCookbookContent(this._cookbook.id, this.onReadContentSuccess.bind(this), this.onReadContentError.bind(this));
+                            if (this._cookbookId != "") {
+                                logger.info("Reading content...");
+                                this._cbkServiceProxy.getCookbookContent(this._cookbookId, this.onReadContentSuccess.bind(this), this.onReadContentError.bind(this));
+                            }
                         };
                         /**
                          * Handles application events, fires in the other widgets
@@ -1520,16 +1526,16 @@ var alasch;
                             this.clearContent();
                             this.initCuisineList(contentData);
                             this.initContent(contentData);
-                            views.EditRecipeWidget.setCookbookId(this._cookbook.id);
+                            views.EditRecipeWidget.setCookbookId(this._cookbookId);
                         };
                         ContentWidget.prototype.onReadContentError = function (errorCode) {
                             logger.error("Error on get content:" + errorCode);
                         };
                         ContentWidget.prototype.deleteRecipe = function (recipe) {
-                            this._cbkServiceProxy.deleteRecipe(this._cookbook.id, recipe.id, this.onDeleteSuccess.bind(this), this.onDeleteError.bind(this));
+                            this._cbkServiceProxy.deleteRecipe(this._cookbookId, recipe.id, this.onDeleteSuccess.bind(this), this.onDeleteError.bind(this));
                         };
                         ContentWidget.prototype.deleteCuisine = function (cuisineId) {
-                            this._cbkServiceProxy.deleteCuisine(this._cookbook.id, cuisineId, this.onDeleteSuccess.bind(this), this.onDeleteError.bind(this));
+                            this._cbkServiceProxy.deleteCuisine(this._cookbookId, cuisineId, this.onDeleteSuccess.bind(this), this.onDeleteError.bind(this));
                         };
                         ContentWidget.prototype.clearContent = function () {
                             this._contentTable.empty();
@@ -1654,7 +1660,6 @@ var alasch;
                         var cookbookRef = CookbookElementClickHandler.findCookbookRef($(eventObject.target));
                         var cookbook = CookbookElementClickHandler.extractCookbookData(cookbookRef);
                         if (cookbook) {
-                            views.content.ContentWidget.readCookbook(cookbook);
                         }
                         else {
                             logger.warning("No event object was received on click cookbook name!!");
@@ -1707,6 +1712,8 @@ var alasch;
                     CookbooksWidget.prototype.appendCookbook = function (cookbookElement, data) {
                         cookbookElement.removeClass(COOKBOOKS_TEMPLATE_CLASS);
                         var cookbookRef = cookbookElement.find(COOKBOOK_REF_SELECTOR);
+                        var hrefElement = cookbookElement.find('a');
+                        hrefElement.attr('href', '/cookbook/' + data.id);
                         var cookbookNameBtn = cookbookElement.find('button');
                         var cookbookImage = cookbookElement.find('img');
                         cookbookRef.attr('id', data.id);
@@ -1727,10 +1734,6 @@ var alasch;
 /// <reference path="./definitions/jquery.d.ts" />
 /// <reference path="./views/BaseWidget.ts" />
 /// <reference path="./views/CookbooksWidget.ts" />
-/// <reference path="./views/content/ContentWidget.ts" />
-/// <reference path="./views/ViewRecipeWidget.ts" />
-/// <reference path="./views/EditRecipeWidget.ts" />
-/// <reference path="./views/ModalDialog.ts" />
 /// <reference path="./utils/TraceConsole.ts" />
 ///<reference path="./http/CookbookRequestResponse.ts"/>
 ///<reference path="./http/CookbookServiceProxy.ts"/>
@@ -1742,16 +1745,13 @@ var alasch;
     (function (cookbook) {
         var ui;
         (function (ui) {
-            var logger = alasch.cookbook.ui.utils.LoggerFactory.getLogger('AppClientMain');
+            var logger = alasch.cookbook.ui.utils.LoggerFactory.getLogger('CookbookMain');
             var AppClientMain = (function () {
                 function AppClientMain() {
                     this._cbkServiceProxy = new ui.http.CookbookServiceProxy();
-                    this._contentWidget = new ui.views.content.ContentWidget(this._cbkServiceProxy);
                     this._cookbooksWidget = new ui.views.CookbooksWidget(this._cbkServiceProxy);
                     this._traceConsole = new ui.utils.TraceConsole();
-                    this._viewRecipesWidget = ui.views.ViewRecipeWidget.getInstance();
                     this.createCookbooksWidget();
-                    this.createEditRecipeWidget();
                 }
                 AppClientMain.prototype.init = function () {
                     this._cbkServiceProxy.init();
@@ -1761,31 +1761,70 @@ var alasch;
                 AppClientMain.prototype.initJQueryElements = function () {
                     this._cookbooksWidget.readCookbooks();
                     //this._contentWidget.readContent();
+                    this._traceConsole.hide();
+                };
+                AppClientMain.prototype.createCookbooksWidget = function () {
+                    var appEventListener = new ui.views.AppEventListener();
+                };
+                return AppClientMain;
+            })();
+            ui.AppClientMain = AppClientMain;
+            var CookbookMain = (function () {
+                function CookbookMain() {
+                    this._cbkServiceProxy = new ui.http.CookbookServiceProxy();
+                    this._contentWidget = new ui.views.content.ContentWidget(this._cbkServiceProxy);
+                    this._traceConsole = new ui.utils.TraceConsole();
+                    this._viewRecipesWidget = ui.views.ViewRecipeWidget.getInstance();
+                    this.createEditRecipeWidget();
+                    this._initialized = false;
+                }
+                CookbookMain.prototype.init = function (cookbookId) {
+                    this._contentWidget.setCookbookId(cookbookId);
+                    if (!this._initialized) {
+                        this._cbkServiceProxy.init();
+                        this.initJQueryElements();
+                        this._initialized = true;
+                        logger.info("Initialized OK");
+                    }
+                };
+                CookbookMain.prototype.initJQueryElements = function () {
+                    this._contentWidget.readContent();
                     this._editRecipeWidget.init();
                     this._traceConsole.hide();
                     this._navBar = $(ui.utils.Helpers.idSelector('li-add-recipe-id'));
                     this._navBar.on('click', this.onClick.bind(this));
                 };
-                AppClientMain.prototype.createEditRecipeWidget = function () {
+                CookbookMain.prototype.createEditRecipeWidget = function () {
                     var appEventListener = new ui.views.AppEventListener();
                     appEventListener.notify = this._contentWidget.onAppEvent.bind(this._contentWidget);
                     this._editRecipeWidget = new ui.views.EditRecipeWidget(appEventListener, this._cbkServiceProxy);
                 };
-                AppClientMain.prototype.createCookbooksWidget = function () {
-                    var appEventListener = new ui.views.AppEventListener();
-                    appEventListener.notify = this._contentWidget.onAppEvent.bind(this._contentWidget);
-                };
-                AppClientMain.prototype.onClick = function () {
+                CookbookMain.prototype.onClick = function () {
                     this._editRecipeWidget.clear();
                 };
-                return AppClientMain;
+                return CookbookMain;
             })();
-            ui.AppClientMain = AppClientMain;
+            ui.CookbookMain = CookbookMain;
         })(ui = cookbook.ui || (cookbook.ui = {}));
     })(cookbook = alasch.cookbook || (alasch.cookbook = {}));
 })(alasch || (alasch = {}));
+function getCookbookId() {
+    var url = document.location.href;
+    var cookbookId = "";
+    var components = url.split("/");
+    if (components.length == 5 && components[3] === 'cookbook') {
+        cookbookId = components[4];
+    }
+    return cookbookId;
+}
 $(document).ready(function () {
     var appMain = new alasch.cookbook.ui.AppClientMain();
     appMain.init();
-    console.log('document is ready !!');
+    console.log('AppClientMain document is ready !!');
+    var coookbookId = getCookbookId();
+    if (coookbookId !== "") {
+        var cookbookMain = new alasch.cookbook.ui.CookbookMain();
+        cookbookMain.init(coookbookId);
+        console.log('CookbookMain document is ready !!');
+    }
 });

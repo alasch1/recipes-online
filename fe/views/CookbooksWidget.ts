@@ -27,7 +27,9 @@ module alasch.cookbook.ui.views {
             var cookbookRef = CookbookElementClickHandler.findCookbookRef($(eventObject.target));
             var cookbook: model.CookbookDTO = CookbookElementClickHandler.extractCookbookData(cookbookRef);
             if (cookbook) {
-                content.ContentWidget.readCookbook(cookbook);
+                // build url
+                //var cookbookUrl = "/cookbook/" + cookbook.id
+                //content.ContentWidget.setCookbook(cookbook);
             }
             else {
                 logger.warning("No event object was received on click cookbook name!!");
@@ -84,7 +86,6 @@ module alasch.cookbook.ui.views {
         }
 
         private initCookbooksList(cookbooks: model.CookbookDTO[]) {
-
             cookbooks.forEach(function(cookbookDto, index, array) {
                 var cookbookElement: JQuery = this._cookbooksGrid.addCell(cookbookDto, this.appendCookbook.bind(this));
             }.bind(this));
@@ -93,6 +94,8 @@ module alasch.cookbook.ui.views {
         private appendCookbook(cookbookElement: JQuery, data: model.CookbookDTO) : void {
             cookbookElement.removeClass(COOKBOOKS_TEMPLATE_CLASS);
             var cookbookRef: JQuery = cookbookElement.find(COOKBOOK_REF_SELECTOR);
+            var hrefElement: JQuery = cookbookElement.find('a');
+            hrefElement.attr('href','/cookbook/'+ data.id);
             var cookbookNameBtn: JQuery = cookbookElement.find('button');
             var cookbookImage: JQuery = cookbookElement.find('img');
             cookbookRef.attr('id', data.id);
