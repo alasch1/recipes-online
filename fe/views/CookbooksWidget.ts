@@ -2,7 +2,7 @@
  * Created by aschneider on 11/7/2015.
  */
 /// <reference path="./BaseWidget.ts" />
-/// <reference path="./content/ContentWidget.ts" />
+/// <reference path="cookbook/content/ContentWidget.ts" />
 /// <reference path="../utils/TraceConsole.ts" />
 /// <reference path="../model/CookbookDTO.ts" />
 /// <reference path="../utils/Grid.ts" />
@@ -15,11 +15,13 @@ module alasch.cookbook.ui.views {
     var utils = alasch.cookbook.ui.utils;
     var model = alasch.cookbook.ui.model;
     var http = alasch.cookbook.ui.http;
+    var content = alasch.cookbook.ui.views.cookbook.content;
 
     var COOKBOOKS_TEMPLATE_CLASS = 'cookbook-template';
     var COOKBOOKS_CONTAINER_SELECTOR = '#cookbooks-container';
     var COOKBOOK_REF_SELECTOR = '.cookbook-js';
     var COOKBOOK_DATA_PROPERTY = 'cookbook-data';
+    var COOKBOOK_VIEW_SELECTOR = '.cookbook-view';
 
     class CookbookElementClickHandler {
 
@@ -27,6 +29,7 @@ module alasch.cookbook.ui.views {
             var cookbookRef = CookbookElementClickHandler.findCookbookRef($(eventObject.target));
             var cookbook: model.CookbookDTO = CookbookElementClickHandler.extractCookbookData(cookbookRef);
             if (cookbook) {
+                content.ContentWidget.readCookbook(cookbook);
                 // build url
                 //var cookbookUrl = "/cookbook/" + cookbook.id
                 //content.ContentWidget.setCookbook(cookbook);
@@ -94,8 +97,8 @@ module alasch.cookbook.ui.views {
         private appendCookbook(cookbookElement: JQuery, data: model.CookbookDTO) : void {
             cookbookElement.removeClass(COOKBOOKS_TEMPLATE_CLASS);
             var cookbookRef: JQuery = cookbookElement.find(COOKBOOK_REF_SELECTOR);
-            var hrefElement: JQuery = cookbookElement.find('a');
-            hrefElement.attr('href','/cookbook/'+ data.id);
+            //var hrefElement: JQuery = cookbookElement.find('a');
+            //hrefElement.attr('href','/cookbook/'+ data.id);
             var cookbookNameBtn: JQuery = cookbookElement.find('button');
             var cookbookImage: JQuery = cookbookElement.find('img');
             cookbookRef.attr('id', data.id);

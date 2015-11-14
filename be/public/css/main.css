@@ -10,7 +10,7 @@ body {
 }
 
 nav {
-   font-weight: bold;
+   font-weight: normal;
 }
 
 .header-image {
@@ -23,7 +23,7 @@ nav {
     background-size: cover;
     -o-background-size: cover;
     padding: 0;
-    min-height: 250px;
+    min-height: 50%;
     margin-bottom: -20px;
     border: none;
 }
@@ -42,7 +42,8 @@ nav {
     font-size: 140px;
 }
 
-.cookbook-title {
+/*.cookbook-title {*/
+header h1 {
     /*font-size: 72px;*/
     color:orangered;
     margin-top:220px;
@@ -186,21 +187,23 @@ footer {
     box-shadow: 0 0 10px #ccc;
 }
 
-/*.cookbooks-nav nav {*/
-    /*margin: 0;*/
-    /*overflow: hidden;*/
-/*}*/
+/* cookbook menu nav bar*/
+.navbar-custom {
+    background-color: rgb(51, 122, 183);
+    border-color: #E7E7E7;
+}
 
-/*.cookbooks-nav ul {*/
-    /*margin: 0;*/
-    /*padding: 0;*/
-/*}*/
+.navbar-custom .navbar-nav > li > a {
+    color: #FFFFFF;
+}
 
-/*.cookbooks-nav li {*/
-    /*display: inline-block;*/
-    /*list-style-type: none;*/
-/*}*/
-
+.navbar-custom .navbar-nav > .active > a,
+.navbar-custom .navbar-nav > .active > a:hover,
+.navbar-custom .navbar-nav > .active > a:focus {
+    background-color: #E7E7E7;
+    color: #555555;
+}
+/* end of cookbook menu nav bar*/
 
 .cuisine-container {
     background-color: transparent;

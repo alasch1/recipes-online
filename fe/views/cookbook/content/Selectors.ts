@@ -2,7 +2,7 @@
  * Created by aschneider on 10/31/2015.
  */
 
-module alasch.cookbook.ui.views.content {
+module alasch.cookbook.ui.views.cookbook.content {
 
     export class Selectors {
         static CUISINE_JS_SELECTOR: string='.cuisine-js';

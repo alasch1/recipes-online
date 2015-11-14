@@ -2,10 +2,10 @@
  * Created by aschneider on 10/31/2015.
  */
 
-/// <reference path="../../utils/TraceConsole.ts" />
+/// <reference path="../../../utils/TraceConsole.ts" />
 /// <reference path="./Selectors.ts" />
 
-module alasch.cookbook.ui.views.content {
+module alasch.cookbook.ui.views.cookbook.content {
 
     var logger:alasch.cookbook.ui.utils.Logger = alasch.cookbook.ui.utils.LoggerFactory.getLogger('Helpers');
     var model = alasch.cookbook.ui.model;

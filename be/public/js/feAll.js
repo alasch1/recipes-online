@@ -46,7 +46,7 @@ var alasch;
                         }
                         var requestBody;
                         if (request.parameters != null) {
-                            if (request.httpMethod == 0 /* GET */) {
+                            if (request.httpMethod == HttpMethod.GET) {
                                 url += "?" + jQuery.param(request.parameters);
                             }
                             else {
@@ -67,7 +67,7 @@ var alasch;
                             contentType: "application/json",
                             async: !request.isSynchronized
                         };
-                        if (request.httpMethod != 0 /* GET */) {
+                        if (request.httpMethod != HttpMethod.GET) {
                             ajaxSettings.data = requestBody;
                         }
                         if (this.overrideRequestHeaders != null) {
@@ -149,11 +149,10 @@ var alasch;
  * Created by naviyehezkel on 26/07/2015.
  */
 /// <reference path="./WebServiceProxy.ts" />
-var __extends = this.__extends || function (d, b) {
+var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var alasch;
 (function (alasch) {
@@ -166,7 +165,7 @@ var alasch;
                 var CookbookRequest = (function () {
                     function CookbookRequest(data, httpMethod, route) {
                         this._data = data;
-                        this._httpMethod = typeof (httpMethod) === "undefined" ? 1 /* POST */ : httpMethod;
+                        this._httpMethod = typeof (httpMethod) === "undefined" ? http.HttpMethod.POST : httpMethod;
                         this._route = route || "";
                     }
                     CookbookRequest.prototype.getData = function () {
@@ -188,12 +187,15 @@ var alasch;
                         return this._route;
                     };
                     CookbookRequest.prototype.validate = function () {
-                        if (this._httpMethod == 0 /* GET */ && this.getRoute() == "") {
-                            throw new Error("Invalid request. " + "When invoking a service request with the 'Http GET' method, the deriving class must implement the getRoute() method.");
+                        if (this._httpMethod == http.HttpMethod.GET && this.getRoute() == "") {
+                            throw new Error("Invalid request. " +
+                                "When invoking a service request with the 'Http GET' method, the deriving class must implement the getRoute() method.");
                         }
                     };
                     CookbookRequest.prototype.toString = function () {
-                        return ('[' + this._httpMethod + ', path:' + this.getRoute() + ', data:' + JSON.stringify(this._data) + ']');
+                        return ('[' + this._httpMethod +
+                            ', path:' + this.getRoute() +
+                            ', data:' + JSON.stringify(this._data) + ']');
                     };
                     return CookbookRequest;
                 })();
@@ -307,16 +309,16 @@ var alasch;
                         var cssClass = "logItem ";
                         var defaultCssClass = "logLevelInfo";
                         switch (level) {
-                            case 0 /* INFO */:
+                            case LogLevel.INFO:
                                 cssClass += "logLevelInfo";
                                 break;
-                            case 1 /* DEBUG */:
+                            case LogLevel.DEBUG:
                                 cssClass += "logLevelDebug";
                                 break;
-                            case 2 /* WARNING */:
+                            case LogLevel.WARNING:
                                 cssClass += "logLevelWarning";
                                 break;
-                            case 3 /* ERROR */:
+                            case LogLevel.ERROR:
                                 cssClass += "logLevelError";
                                 break;
                             default:
@@ -339,16 +341,16 @@ var alasch;
                         this.traceConsole = traceConsole;
                     }
                     Logger.prototype.info = function (msg) {
-                        this.log(0 /* INFO */, msg);
+                        this.log(LogLevel.INFO, msg);
                     };
                     Logger.prototype.debug = function (msg) {
-                        this.log(1 /* DEBUG */, msg);
+                        this.log(LogLevel.DEBUG, msg);
                     };
                     Logger.prototype.warning = function (msg) {
-                        this.log(2 /* WARNING */, msg);
+                        this.log(LogLevel.WARNING, msg);
                     };
                     Logger.prototype.error = function (msg) {
-                        this.log(3 /* ERROR */, msg);
+                        this.log(LogLevel.ERROR, msg);
                     };
                     Logger.prototype.log = function (logLevel, msg) {
                         msg = "[" + this.name + "] " + msg;
@@ -390,37 +392,37 @@ var alasch;
                         this._proxy.rootUrl = CookbookServiceProxy._rootPath;
                     };
                     CookbookServiceProxy.prototype.getCookbooks = function (onSuccess, onError) {
-                        var request = new http.CookbookRequest(null, 0 /* GET */, CookbookServiceProxy._cookbookPath);
+                        var request = new http.CookbookRequest(null, http.HttpMethod.GET, CookbookServiceProxy._cookbookPath);
                         this.invokeRequest(request, onSuccess, onError);
                     };
                     CookbookServiceProxy.prototype.getCookbookContent = function (cookbookId, onSuccess, onError) {
                         var route = this.buildCookbookIdUrl(cookbookId) + "/content";
-                        var request = new http.CookbookRequest(null, 0 /* GET */, route);
+                        var request = new http.CookbookRequest(null, http.HttpMethod.GET, route);
                         this.invokeRequest(request, onSuccess, onError);
                     };
                     CookbookServiceProxy.prototype.addRecipe = function (cookbookId, input, onSuccess, onError) {
                         var route = this.buildRecipeUrl(cookbookId);
-                        var request = new http.CookbookRequest(input, 1 /* POST */, route);
+                        var request = new http.CookbookRequest(input, http.HttpMethod.POST, route);
                         this.invokeRequest(request, onSuccess, onError);
                     };
                     CookbookServiceProxy.prototype.updateRecipe = function (cookbookId, input, onSuccess, onError) {
                         var route = this.buildRecipeIdUrl(cookbookId, input.id);
-                        var request = new http.CookbookRequest(input, 2 /* PUT */, route);
+                        var request = new http.CookbookRequest(input, http.HttpMethod.PUT, route);
                         this.invokeRequest(request, onSuccess, onError);
                     };
                     CookbookServiceProxy.prototype.getRecipe = function (cookbookId, recipeId, onSuccess, onError) {
                         var route = this.buildRecipeIdUrl(cookbookId, recipeId);
-                        var request = new http.CookbookRequest(null, 2 /* PUT */, route);
+                        var request = new http.CookbookRequest(null, http.HttpMethod.PUT, route);
                         this.invokeRequest(request, onSuccess, onError);
                     };
                     CookbookServiceProxy.prototype.deleteRecipe = function (cookbookId, recipeId, onSuccess, onError) {
                         var route = this.buildRecipeIdUrl(cookbookId, recipeId);
-                        var request = new http.CookbookRequest(null, 3 /* DELETE */, route);
+                        var request = new http.CookbookRequest(null, http.HttpMethod.DELETE, route);
                         this.invokeRequest(request, onSuccess, onError);
                     };
                     CookbookServiceProxy.prototype.deleteCuisine = function (cookbookId, cuisineId, onSuccess, onError) {
                         var route = this.buildCuisineIdUrl(cookbookId, cuisineId);
-                        var request = new http.CookbookRequest(null, 3 /* DELETE */, route);
+                        var request = new http.CookbookRequest(null, http.HttpMethod.DELETE, route);
                         this.invokeRequest(request, onSuccess, onError);
                     };
                     CookbookServiceProxy.prototype.buildCookbookIdUrl = function (cookbookId) {
@@ -467,7 +469,8 @@ var alasch;
                             onErrorCB(result.statusCode);
                         }
                         else {
-                            logger.error("[FROM CBK] - Recieved failure result - " + CookbookServiceProxy.toStringResultBody(result) + "; no error callback is defined.");
+                            logger.error("[FROM CBK] - Recieved failure result - " + CookbookServiceProxy.toStringResultBody(result) +
+                                "; no error callback is defined.");
                         }
                     };
                     CookbookServiceProxy.toStringResultBody = function (result) {
@@ -675,12 +678,12 @@ var alasch;
 /**
  * Created by aschneider on 9/29/2015.
  */
-/// <reference path="./BaseWidget.ts" />
-/// <reference path="../utils/TraceConsole.ts" />
-/// <reference path="../model/CookbookDTO.ts" />
-/// <reference path="../utils/Grid.ts" />
-/// <reference path="../utils/Helpers.ts" />
-/// <reference path="../definitions/bootstrap.d.ts" />
+/// <reference path="./../BaseWidget.ts" />
+/// <reference path="../../utils/TraceConsole.ts" />
+/// <reference path="../../model/CookbookDTO.ts" />
+/// <reference path="../../utils/Grid.ts" />
+/// <reference path="../../utils/Helpers.ts" />
+/// <reference path="../../definitions/bootstrap.d.ts" />
 var alasch;
 (function (alasch) {
     var cookbook;
@@ -758,7 +761,8 @@ var alasch;
                     CloseButtonHelper.templatePattern = function (recipeId) {
                         //var pattern='<span><button type="button" id="btn-close-id-"' + recipe.id +
                         //    'class="btn-submit"><span class="glyphicon glyphicon-remove"></span></button></span>';
-                        var pattern = '<span><button type="button" id="' + CloseButtonHelper.btnId(recipeId) + '" class="btn-submit btn-close-recipe-view-js">x</span></button></span>';
+                        var pattern = '<span><button type="button" id="' + CloseButtonHelper.btnId(recipeId) +
+                            '" class="btn-submit btn-close-recipe-view-js">x</span></button></span>';
                         return pattern;
                     };
                     CloseButtonHelper.bindOnClick = function (recipeId, onTabRemoved) {
@@ -849,7 +853,8 @@ var alasch;
                     ViewRecipeWidget.prototype.appendRecipeView = function (recipe) {
                         // create the tab
                         //$('<li id="recipe-nav-' + recipe.id + '"><a data-toggle="tab" href="#recipe-tab-'+recipe.id+'">'+recipe.name+'</a></li>').appendTo(this._navBarElement);
-                        var recipeNavTab = $('<li id="recipe-nav-' + recipe.id + '"><a data-toggle="tab" href="#recipe-tab-' + recipe.id + '">' + CloseButtonHelper.templatePattern(recipe.id) + '&nbsp;' + recipe.name + '</a></li>');
+                        var recipeNavTab = $('<li id="recipe-nav-' + recipe.id + '"><a data-toggle="tab" href="#recipe-tab-' + recipe.id + '">'
+                            + CloseButtonHelper.templatePattern(recipe.id) + '&nbsp;' + recipe.name + '</a></li>');
                         if (recipeNavTab.length == 0) {
                             logger.error("Failed to create nav tab for recipe " + recipe.name);
                             return;
@@ -934,12 +939,12 @@ var alasch;
                     };
                     OperationResultModals.prototype.init = function () {
                         // init dialogs
-                        this._dialogs[0 /* updateOk */] = this.getDialog('update-ok-dlg');
-                        this._dialogs[1 /* updateFailed */] = this.getDialog('update-err-dlg');
-                        this._dialogs[2 /* createOk */] = this.getDialog('create-ok-dlg');
-                        this._dialogs[3 /* createFailed */] = this.getDialog('create-err-dlg');
-                        this._dialogs[4 /* deleteOk */] = this.getDialog('delete-ok-dlg');
-                        this._dialogs[5 /* deleteFailed */] = this.getDialog('delete-err-dlg');
+                        this._dialogs[OperationResultId.updateOk] = this.getDialog('update-ok-dlg');
+                        this._dialogs[OperationResultId.updateFailed] = this.getDialog('update-err-dlg');
+                        this._dialogs[OperationResultId.createOk] = this.getDialog('create-ok-dlg');
+                        this._dialogs[OperationResultId.createFailed] = this.getDialog('create-err-dlg');
+                        this._dialogs[OperationResultId.deleteOk] = this.getDialog('delete-ok-dlg');
+                        this._dialogs[OperationResultId.deleteFailed] = this.getDialog('delete-err-dlg');
                     };
                     OperationResultModals.prototype.getDialog = function (dlgId) {
                         return $(utils.Helpers.idSelector(dlgId)).clone();
@@ -1023,12 +1028,12 @@ var alasch;
 /**
  * Created by aschneider on 10/3/2015.
  */
-/// <reference path="./BaseWidget.ts" />
-/// <reference path="../utils/TraceConsole.ts" />
-/// <reference path="../model/CookbookDTO.ts" />
-/// <reference path="../utils/Grid.ts"/>
-/// <reference path="../utils/Helpers.ts" />
-/// <reference path="./ModalDialog.ts" />
+/// <reference path="./../BaseWidget.ts" />
+/// <reference path="../../utils/TraceConsole.ts" />
+/// <reference path="../../model/CookbookDTO.ts" />
+/// <reference path="../../utils/Grid.ts"/>
+/// <reference path="../../utils/Helpers.ts" />
+/// <reference path="./../ModalDialog.ts" />
 var alasch;
 (function (alasch) {
     var cookbook;
@@ -1065,6 +1070,7 @@ var alasch;
                         this._ingredRowsGrid = new utils.Grid(classSelector(INGRED_ROW_TEMPLATE_CLASS), this._ingredTable);
                     }
                     IngredTableHandler.prototype.createEmptyRows = function (rowsNumber) {
+                        // add 10 empty rows
                         for (var i = 0; i < rowsNumber; i++) {
                             this._ingredRowsGrid.addCell(null, this.bindIngredRow.bind(this));
                         }
@@ -1197,11 +1203,11 @@ var alasch;
                         var operationResultId;
                         var appEvent;
                         if (this._recipe) {
-                            operationResultId = 0 /* updateOk */;
+                            operationResultId = views.OperationResultId.updateOk;
                             appEvent = "updateSuccess";
                         }
                         else {
-                            operationResultId = 2 /* createOk */;
+                            operationResultId = views.OperationResultId.createOk;
                             appEvent = "createSuccess";
                         }
                         views.ModalDialogsHandler.showOperationResult(operationResultId);
@@ -1211,10 +1217,10 @@ var alasch;
                     EditRecipeWidget.prototype.onSaveError = function (errCode) {
                         var operationResultId;
                         if (this._recipe) {
-                            operationResultId = 1 /* updateFailed */;
+                            operationResultId = views.OperationResultId.updateFailed;
                         }
                         else {
-                            operationResultId = 3 /* createFailed */;
+                            operationResultId = views.OperationResultId.createFailed;
                         }
                         views.ModalDialogsHandler.showOperationResult(operationResultId);
                     };
@@ -1257,381 +1263,390 @@ var alasch;
 var alasch;
 (function (alasch) {
     var cookbook;
-    (function (cookbook) {
+    (function (cookbook_1) {
         var ui;
         (function (ui) {
             var views;
             (function (views) {
-                var content;
-                (function (content) {
-                    var Selectors = (function () {
-                        function Selectors() {
-                        }
-                        Selectors.CUISINE_JS_SELECTOR = '.cuisine-js';
-                        Selectors.CUISINE_NAME_JS_SELECTOR = '.cuisine-name-js';
-                        Selectors.CUISINE_DATA_PROPERTY = 'cuisine_data';
-                        Selectors.RECIPE_ROW_SELECTOR = '.recipe-row-js';
-                        Selectors.RECIPE_REF_JS_SELECTOR = '.recipe-ref-js';
-                        Selectors.RECIPE_DATA_PROPERTY = 'recipe_data';
-                        return Selectors;
-                    })();
-                    content.Selectors = Selectors;
-                })(content = views.content || (views.content = {}));
+                var cookbook;
+                (function (cookbook) {
+                    var content;
+                    (function (content) {
+                        var Selectors = (function () {
+                            function Selectors() {
+                            }
+                            Selectors.CUISINE_JS_SELECTOR = '.cuisine-js';
+                            Selectors.CUISINE_NAME_JS_SELECTOR = '.cuisine-name-js';
+                            Selectors.CUISINE_DATA_PROPERTY = 'cuisine_data';
+                            Selectors.RECIPE_ROW_SELECTOR = '.recipe-row-js';
+                            Selectors.RECIPE_REF_JS_SELECTOR = '.recipe-ref-js';
+                            Selectors.RECIPE_DATA_PROPERTY = 'recipe_data';
+                            return Selectors;
+                        })();
+                        content.Selectors = Selectors;
+                    })(content = cookbook.content || (cookbook.content = {}));
+                })(cookbook = views.cookbook || (views.cookbook = {}));
             })(views = ui.views || (ui.views = {}));
-        })(ui = cookbook.ui || (cookbook.ui = {}));
+        })(ui = cookbook_1.ui || (cookbook_1.ui = {}));
     })(cookbook = alasch.cookbook || (alasch.cookbook = {}));
 })(alasch || (alasch = {}));
 /**
  * Created by aschneider on 10/31/2015.
  */
-/// <reference path="../../utils/TraceConsole.ts" />
+/// <reference path="../../../utils/TraceConsole.ts" />
 /// <reference path="./Selectors.ts" />
 var alasch;
 (function (alasch) {
     var cookbook;
-    (function (cookbook) {
+    (function (cookbook_2) {
         var ui;
         (function (ui) {
             var views;
             (function (views) {
-                var content;
-                (function (content) {
-                    var logger = alasch.cookbook.ui.utils.LoggerFactory.getLogger('Helpers');
-                    var model = alasch.cookbook.ui.model;
-                    /**
-                     * Encapsulates hover handling over an cuisine content.
-                     * Handles 2 different cases: hover on a cuisine name and hover on a recipe name
-                     * Each cuisine and recipe may have a sibling toggable element.
-                     * When the handler wakes up upon a mouse move over the element :
-                     * onMouseEnter - decorates an element text with underline and shows the sibling element
-                     * onMouseLeave - removes the decoration and hides the sibling element
-                     */
-                    var ElementsHoverHandler = (function () {
-                        function ElementsHoverHandler() {
-                        }
-                        ElementsHoverHandler.onMouseEnterCuisine = function () {
-                            var selectedElement = $(this);
-                            ElementsHoverHandler.toggleDecoration(selectedElement, true);
-                            ElementsHoverHandler.getCuisineToggable(selectedElement).show();
-                        };
-                        ElementsHoverHandler.onMouseLeaveCuisine = function () {
-                            var selectedElement = $(this);
-                            ElementsHoverHandler.toggleDecoration(selectedElement, false);
-                            ElementsHoverHandler.getCuisineToggable(selectedElement).hide();
-                        };
-                        ElementsHoverHandler.onMouseEnterRecipe = function () {
-                            var selectedElement = $(this);
-                            ElementsHoverHandler.toggleDecoration(selectedElement, true);
-                            ElementsHoverHandler.getRecipeToggable(selectedElement).show();
-                        };
-                        ElementsHoverHandler.onMouseLeaveRecipe = function () {
-                            var selectedElement = $(this);
-                            ElementsHoverHandler.toggleDecoration(selectedElement, false);
-                            ElementsHoverHandler.getRecipeToggable(selectedElement).hide();
-                        };
-                        ElementsHoverHandler.getCuisineToggable = function (selectedElement) {
-                            return selectedElement.find(ElementsHoverHandler.CUISINE_TOGGABLE);
-                        };
-                        ElementsHoverHandler.getRecipeToggable = function (selectedElement) {
-                            return selectedElement.find(ElementsHoverHandler.RECIPE_TOGGABLE);
-                        };
-                        ElementsHoverHandler.toggleDecoration = function (selectedElement, setUnderline) {
-                            if (setUnderline) {
-                                selectedElement.css('text-decoration', 'underline');
+                var cookbook;
+                (function (cookbook) {
+                    var content;
+                    (function (content) {
+                        var logger = alasch.cookbook.ui.utils.LoggerFactory.getLogger('Helpers');
+                        var model = alasch.cookbook.ui.model;
+                        /**
+                         * Encapsulates hover handling over an cuisine content.
+                         * Handles 2 different cases: hover on a cuisine name and hover on a recipe name
+                         * Each cuisine and recipe may have a sibling toggable element.
+                         * When the handler wakes up upon a mouse move over the element :
+                         * onMouseEnter - decorates an element text with underline and shows the sibling element
+                         * onMouseLeave - removes the decoration and hides the sibling element
+                         */
+                        var ElementsHoverHandler = (function () {
+                            function ElementsHoverHandler() {
                             }
-                            else {
-                                selectedElement.css('text-decoration', '');
+                            ElementsHoverHandler.onMouseEnterCuisine = function () {
+                                var selectedElement = $(this);
+                                ElementsHoverHandler.toggleDecoration(selectedElement, true);
+                                ElementsHoverHandler.getCuisineToggable(selectedElement).show();
+                            };
+                            ElementsHoverHandler.onMouseLeaveCuisine = function () {
+                                var selectedElement = $(this);
+                                ElementsHoverHandler.toggleDecoration(selectedElement, false);
+                                ElementsHoverHandler.getCuisineToggable(selectedElement).hide();
+                            };
+                            ElementsHoverHandler.onMouseEnterRecipe = function () {
+                                var selectedElement = $(this);
+                                ElementsHoverHandler.toggleDecoration(selectedElement, true);
+                                ElementsHoverHandler.getRecipeToggable(selectedElement).show();
+                            };
+                            ElementsHoverHandler.onMouseLeaveRecipe = function () {
+                                var selectedElement = $(this);
+                                ElementsHoverHandler.toggleDecoration(selectedElement, false);
+                                ElementsHoverHandler.getRecipeToggable(selectedElement).hide();
+                            };
+                            ElementsHoverHandler.getCuisineToggable = function (selectedElement) {
+                                return selectedElement.find(ElementsHoverHandler.CUISINE_TOGGABLE);
+                            };
+                            ElementsHoverHandler.getRecipeToggable = function (selectedElement) {
+                                return selectedElement.find(ElementsHoverHandler.RECIPE_TOGGABLE);
+                            };
+                            ElementsHoverHandler.toggleDecoration = function (selectedElement, setUnderline) {
+                                if (setUnderline) {
+                                    selectedElement.css('text-decoration', 'underline');
+                                }
+                                else {
+                                    selectedElement.css('text-decoration', '');
+                                }
+                            };
+                            ElementsHoverHandler.CUISINE_TOGGABLE = '.cuisine-hover-toggle-js';
+                            ElementsHoverHandler.RECIPE_TOGGABLE = '.recipe-hover-toggle-js';
+                            return ElementsHoverHandler;
+                        })();
+                        content.ElementsHoverHandler = ElementsHoverHandler;
+                        /**
+                         * Encapsulates cuisine/recipe operations, which are triggered by click events.
+                         * Recipe operations: view/edit/delete
+                         * Cuisine operation: delete
+                         * Delegates execution to relevant Widget
+                         */
+                        var ElementsClickHandler = (function () {
+                            function ElementsClickHandler() {
                             }
-                        };
-                        ElementsHoverHandler.CUISINE_TOGGABLE = '.cuisine-hover-toggle-js';
-                        ElementsHoverHandler.RECIPE_TOGGABLE = '.recipe-hover-toggle-js';
-                        return ElementsHoverHandler;
-                    })();
-                    content.ElementsHoverHandler = ElementsHoverHandler;
-                    /**
-                     * Encapsulates cuisine/recipe operations, which are triggered by click events.
-                     * Recipe operations: view/edit/delete
-                     * Cuisine operation: delete
-                     * Delegates execution to relevant Widget
-                     */
-                    var ElementsClickHandler = (function () {
-                        function ElementsClickHandler() {
-                        }
-                        ElementsClickHandler.onRecipeClick = function (eventObject) {
-                            var recipe = ElementsClickHandler.extractRecipeData($(eventObject.target));
-                            if (recipe) {
-                                views.ViewRecipeWidget.viewRecipe(recipe);
-                            }
-                            else {
-                                logger.warning("No event object was received on click content table!!");
-                            }
-                        };
-                        ElementsClickHandler.onClickRecipeEditBtn = function (eventObject) {
-                            var recipeRef = ElementsClickHandler.findRecipeRef($(eventObject.target));
-                            var recipe = ElementsClickHandler.extractRecipeData(recipeRef);
-                            if (recipe) {
-                                views.EditRecipeWidget.editRecipe(recipe);
-                            }
-                        };
-                        ElementsClickHandler.onClickRecipeDeleteBtn = function (eventObject) {
-                            var invokeDelete = function (eventObject) {
-                                logger.debug("Delete recipes was invoked");
+                            ElementsClickHandler.onRecipeClick = function (eventObject) {
+                                var recipe = ElementsClickHandler.extractRecipeData($(eventObject.target));
+                                if (recipe) {
+                                    views.ViewRecipeWidget.viewRecipe(recipe);
+                                }
+                                else {
+                                    logger.warning("No event object was received on click content table!!");
+                                }
+                            };
+                            ElementsClickHandler.onClickRecipeEditBtn = function (eventObject) {
                                 var recipeRef = ElementsClickHandler.findRecipeRef($(eventObject.target));
                                 var recipe = ElementsClickHandler.extractRecipeData(recipeRef);
                                 if (recipe) {
-                                    ElementsClickHandler._contentWidget.deleteRecipe.bind(ElementsClickHandler._contentWidget)(recipe);
+                                    views.EditRecipeWidget.editRecipe(recipe);
                                 }
                             };
-                            views.ModalDialogsHandler.showSubmitDelete(new views.SubmitHandler(invokeDelete, eventObject));
-                        };
-                        ElementsClickHandler.findRecipeRef = function (clickedElement) {
-                            return clickedElement.parents(content.Selectors.RECIPE_ROW_SELECTOR).find(content.Selectors.RECIPE_REF_JS_SELECTOR);
-                        };
-                        ElementsClickHandler.extractRecipeData = function (jqElement) {
-                            if (jqElement) {
-                                var data = jqElement.prop(content.Selectors.RECIPE_DATA_PROPERTY);
-                                if (data) {
-                                    return data;
-                                }
-                            }
-                            logger.warning("Recipe data should be bound to recipe-row, but was not found!!");
-                            return null;
-                        };
-                        ElementsClickHandler.onClickCuisineDeleteBtn = function (eventObject) {
-                            var invokeDelete = function (eventObject) {
-                                logger.debug("Delete cuisine was invoked");
-                                var cuisineRef = ElementsClickHandler.findCuisineRef($(eventObject.target));
-                                var cuisineId = ElementsClickHandler.extractCuisineId(cuisineRef);
-                                if (cuisineId !== "") {
-                                    ElementsClickHandler._contentWidget.deleteCuisine.bind(ElementsClickHandler._contentWidget)(cuisineId);
-                                }
+                            ElementsClickHandler.onClickRecipeDeleteBtn = function (eventObject) {
+                                var invokeDelete = function (eventObject) {
+                                    logger.debug("Delete recipes was invoked");
+                                    var recipeRef = ElementsClickHandler.findRecipeRef($(eventObject.target));
+                                    var recipe = ElementsClickHandler.extractRecipeData(recipeRef);
+                                    if (recipe) {
+                                        ElementsClickHandler._contentWidget.deleteRecipe.bind(ElementsClickHandler._contentWidget)(recipe);
+                                    }
+                                };
+                                views.ModalDialogsHandler.showSubmitDelete(new views.SubmitHandler(invokeDelete, eventObject));
                             };
-                            views.ModalDialogsHandler.showSubmitDelete(new views.SubmitHandler(invokeDelete, eventObject));
-                        };
-                        ElementsClickHandler.findCuisineRef = function (clickedElement) {
-                            return clickedElement.parents(content.Selectors.CUISINE_JS_SELECTOR).find(content.Selectors.CUISINE_NAME_JS_SELECTOR);
-                        };
-                        ElementsClickHandler.extractCuisineId = function (jqElement) {
-                            if (jqElement) {
-                                var cuisineId = jqElement.prop(content.Selectors.CUISINE_DATA_PROPERTY);
-                                if (cuisineId) {
-                                    return cuisineId;
+                            ElementsClickHandler.findRecipeRef = function (clickedElement) {
+                                return clickedElement.parents(content.Selectors.RECIPE_ROW_SELECTOR).find(content.Selectors.RECIPE_REF_JS_SELECTOR);
+                            };
+                            ElementsClickHandler.extractRecipeData = function (jqElement) {
+                                if (jqElement) {
+                                    var data = jqElement.prop(content.Selectors.RECIPE_DATA_PROPERTY);
+                                    if (data) {
+                                        return data;
+                                    }
                                 }
-                            }
-                            logger.warning("Cuisine id should be bound to cuisine name, but was not found!!");
-                            return "";
-                        };
-                        return ElementsClickHandler;
-                    })();
-                    content.ElementsClickHandler = ElementsClickHandler;
-                })(content = views.content || (views.content = {}));
+                                logger.warning("Recipe data should be bound to recipe-row, but was not found!!");
+                                return null;
+                            };
+                            ElementsClickHandler.onClickCuisineDeleteBtn = function (eventObject) {
+                                var invokeDelete = function (eventObject) {
+                                    logger.debug("Delete cuisine was invoked");
+                                    var cuisineRef = ElementsClickHandler.findCuisineRef($(eventObject.target));
+                                    var cuisineId = ElementsClickHandler.extractCuisineId(cuisineRef);
+                                    if (cuisineId !== "") {
+                                        ElementsClickHandler._contentWidget.deleteCuisine.bind(ElementsClickHandler._contentWidget)(cuisineId);
+                                    }
+                                };
+                                views.ModalDialogsHandler.showSubmitDelete(new views.SubmitHandler(invokeDelete, eventObject));
+                            };
+                            ElementsClickHandler.findCuisineRef = function (clickedElement) {
+                                return clickedElement.parents(content.Selectors.CUISINE_JS_SELECTOR).find(content.Selectors.CUISINE_NAME_JS_SELECTOR);
+                            };
+                            ElementsClickHandler.extractCuisineId = function (jqElement) {
+                                if (jqElement) {
+                                    var cuisineId = jqElement.prop(content.Selectors.CUISINE_DATA_PROPERTY);
+                                    if (cuisineId) {
+                                        return cuisineId;
+                                    }
+                                }
+                                logger.warning("Cuisine id should be bound to cuisine name, but was not found!!");
+                                return "";
+                            };
+                            return ElementsClickHandler;
+                        })();
+                        content.ElementsClickHandler = ElementsClickHandler;
+                    })(content = cookbook.content || (cookbook.content = {}));
+                })(cookbook = views.cookbook || (views.cookbook = {}));
             })(views = ui.views || (ui.views = {}));
-        })(ui = cookbook.ui || (cookbook.ui = {}));
+        })(ui = cookbook_2.ui || (cookbook_2.ui = {}));
     })(cookbook = alasch.cookbook || (alasch.cookbook = {}));
 })(alasch || (alasch = {}));
 /**
  * Created by aschneider on 9/23/2015.
  */
-/// <reference path="./../BaseWidget.ts" />
-/// <reference path="../../utils/TraceConsole.ts" />
-/// <reference path="../../model/CookbookDTO.ts" />
-/// <reference path="../../utils/Grid.ts"/>
+/// <reference path="../../BaseWidget.ts" />
+/// <reference path="../../../utils/TraceConsole.ts" />
+/// <reference path="../../../model/CookbookDTO.ts" />
+/// <reference path="../../../utils/Grid.ts"/>
 /// <reference path="../ViewRecipeWidget.ts" />
-/// <reference path="../EditRecipeWidget.ts" />
-/// <reference path="../ModalDialog.ts" />
+/// <reference path="../../cookbook/EditRecipeWidget.ts" />
+/// <reference path="../../ModalDialog.ts" />
 /// <reference path="./ElementsHandlers.ts" />
 /// <reference path="./Selectors.ts" />
 var alasch;
 (function (alasch) {
     var cookbook;
-    (function (_cookbook) {
+    (function (cookbook_3) {
         var ui;
         (function (ui) {
             var views;
             (function (views) {
-                var content;
-                (function (content) {
-                    var logger = alasch.cookbook.ui.utils.LoggerFactory.getLogger('ContentWidget');
-                    var utils = alasch.cookbook.ui.utils;
-                    var model = alasch.cookbook.ui.model;
-                    var http = alasch.cookbook.ui.http;
-                    var CUISINE_LIST_SELECTOR = '#cuisines-datalist';
-                    var DATALIST_OPTION_SELECTOR = '<option></option>';
-                    var CONTENT_TABLE_SELECTOR = '#content-table';
-                    var CUISINE_TEMPLATE_CLASS = 'cuisine-template';
-                    var RECIPE_CONTAINER_SELECTOR = '.recipes-tab-js';
-                    var RECIPE_TEMPLATE_SELECTOR = '.recipe-row-template';
-                    var EDIT_RECIPE_BTN_SELECTOR = '.edit-recipe-btn-js';
-                    var DELETE_RECIPE_BTN_SELECTOR = '.delete-recipe-btn-js';
-                    var DELETE_CUISINE_BTN_SELECTOR = '.delete-cuisine-btn-js';
-                    var CuisineGrid = (function (_super) {
-                        __extends(CuisineGrid, _super);
-                        function CuisineGrid(name, container) {
-                            _super.call(this, RECIPE_TEMPLATE_SELECTOR, container);
-                            this._name = name;
-                        }
-                        return CuisineGrid;
-                    })(alasch.cookbook.ui.utils.Grid);
-                    var ContentWidget = (function (_super) {
-                        __extends(ContentWidget, _super);
-                        function ContentWidget(cbkServiceProxy) {
-                            _super.call(this, CONTENT_TABLE_SELECTOR, null, cbkServiceProxy);
-                            ContentWidget.singleton = this;
-                            this._cookbookId = "";
-                            this._cuisinesList = $(CUISINE_LIST_SELECTOR);
-                            this._contentTable = $(CONTENT_TABLE_SELECTOR);
-                            this._cuisinesListGrid = new alasch.cookbook.ui.utils.Grid(DATALIST_OPTION_SELECTOR, this._cuisinesList);
-                            this._contentGrid = new utils.Grid(utils.Helpers.classSelector(CUISINE_TEMPLATE_CLASS), this._contentTable);
-                            this._cuisineContentGrids = new Array();
-                            content.ElementsClickHandler._contentWidget = this;
-                            this._element.on('click', content.Selectors.RECIPE_REF_JS_SELECTOR, content.ElementsClickHandler.onRecipeClick);
-                            this._element.on('mouseenter', content.Selectors.RECIPE_ROW_SELECTOR, content.ElementsHoverHandler.onMouseEnterRecipe);
-                            this._element.on('mouseleave', content.Selectors.RECIPE_ROW_SELECTOR, content.ElementsHoverHandler.onMouseLeaveRecipe);
-                            this._element.on('click', EDIT_RECIPE_BTN_SELECTOR, content.ElementsClickHandler.onClickRecipeEditBtn);
-                            this._element.on('click', DELETE_RECIPE_BTN_SELECTOR, content.ElementsClickHandler.onClickRecipeDeleteBtn);
-                            this._element.on('mouseenter', content.Selectors.CUISINE_JS_SELECTOR, content.ElementsHoverHandler.onMouseEnterCuisine);
-                            this._element.on('mouseleave', content.Selectors.CUISINE_JS_SELECTOR, content.ElementsHoverHandler.onMouseLeaveCuisine);
-                            this._element.on('click', DELETE_CUISINE_BTN_SELECTOR, content.ElementsClickHandler.onClickCuisineDeleteBtn);
-                        }
-                        ContentWidget.prototype.setCookbookId = function (cookbookId) {
-                            this._cookbookId = cookbookId;
-                        };
-                        ContentWidget.readCookbook = function (cookbook) {
-                            ContentWidget.singleton.setCookbookId(cookbook.id);
-                            ContentWidget.singleton.readContent();
-                        };
-                        ContentWidget.getCookbookId = function () {
-                            return ContentWidget.singleton._cookbookId;
-                        };
-                        ContentWidget.prototype.readContent = function () {
-                            // bring data for templates init
-                            if (this._cookbookId != "") {
-                                logger.info("Reading content...");
-                                this._cbkServiceProxy.getCookbookContent(this._cookbookId, this.onReadContentSuccess.bind(this), this.onReadContentError.bind(this));
+                var cookbook;
+                (function (cookbook_4) {
+                    var content;
+                    (function (content) {
+                        var logger = alasch.cookbook.ui.utils.LoggerFactory.getLogger('ContentWidget');
+                        var utils = alasch.cookbook.ui.utils;
+                        var model = alasch.cookbook.ui.model;
+                        var http = alasch.cookbook.ui.http;
+                        var CUISINE_LIST_SELECTOR = '#cuisines-datalist';
+                        var DATALIST_OPTION_SELECTOR = '<option></option>';
+                        var CONTENT_TABLE_SELECTOR = '#content-table';
+                        var CUISINE_TEMPLATE_CLASS = 'cuisine-template';
+                        var RECIPE_CONTAINER_SELECTOR = '.recipes-tab-js';
+                        var RECIPE_TEMPLATE_SELECTOR = '.recipe-row-template';
+                        var EDIT_RECIPE_BTN_SELECTOR = '.edit-recipe-btn-js';
+                        var DELETE_RECIPE_BTN_SELECTOR = '.delete-recipe-btn-js';
+                        var DELETE_CUISINE_BTN_SELECTOR = '.delete-cuisine-btn-js';
+                        var CuisineGrid = (function (_super) {
+                            __extends(CuisineGrid, _super);
+                            function CuisineGrid(name, container) {
+                                _super.call(this, RECIPE_TEMPLATE_SELECTOR, container);
+                                this._name = name;
                             }
-                        };
-                        /**
-                         * Handles application events, fires in the other widgets
-                         * @param appEventTag
-                         */
-                        ContentWidget.prototype.onAppEvent = function (appEventTag) {
-                            switch (appEventTag) {
-                                case 'updateSuccess':
-                                case 'createSuccess':
-                                    this.readContent();
+                            return CuisineGrid;
+                        })(alasch.cookbook.ui.utils.Grid);
+                        var ContentWidget = (function (_super) {
+                            __extends(ContentWidget, _super);
+                            function ContentWidget(cbkServiceProxy) {
+                                _super.call(this, CONTENT_TABLE_SELECTOR, null, cbkServiceProxy);
+                                ContentWidget.singleton = this;
+                                this._cookbookId = "";
+                                this._cuisinesList = $(CUISINE_LIST_SELECTOR);
+                                this._contentTable = $(CONTENT_TABLE_SELECTOR);
+                                this._cuisinesListGrid = new alasch.cookbook.ui.utils.Grid(DATALIST_OPTION_SELECTOR, this._cuisinesList);
+                                this._contentGrid = new utils.Grid(utils.Helpers.classSelector(CUISINE_TEMPLATE_CLASS), this._contentTable);
+                                this._cuisineContentGrids = new Array();
+                                content.ElementsClickHandler._contentWidget = this;
+                                this._element.on('click', content.Selectors.RECIPE_REF_JS_SELECTOR, content.ElementsClickHandler.onRecipeClick);
+                                this._element.on('mouseenter', content.Selectors.RECIPE_ROW_SELECTOR, content.ElementsHoverHandler.onMouseEnterRecipe);
+                                this._element.on('mouseleave', content.Selectors.RECIPE_ROW_SELECTOR, content.ElementsHoverHandler.onMouseLeaveRecipe);
+                                this._element.on('click', EDIT_RECIPE_BTN_SELECTOR, content.ElementsClickHandler.onClickRecipeEditBtn);
+                                this._element.on('click', DELETE_RECIPE_BTN_SELECTOR, content.ElementsClickHandler.onClickRecipeDeleteBtn);
+                                this._element.on('mouseenter', content.Selectors.CUISINE_JS_SELECTOR, content.ElementsHoverHandler.onMouseEnterCuisine);
+                                this._element.on('mouseleave', content.Selectors.CUISINE_JS_SELECTOR, content.ElementsHoverHandler.onMouseLeaveCuisine);
+                                this._element.on('click', DELETE_CUISINE_BTN_SELECTOR, content.ElementsClickHandler.onClickCuisineDeleteBtn);
                             }
-                        };
-                        ContentWidget.prototype.onReadContentSuccess = function (contentData) {
-                            logger.info("Recieved content:" + JSON.stringify(contentData));
-                            this.clearContent();
-                            this.initCuisineList(contentData);
-                            this.initContent(contentData);
-                            views.EditRecipeWidget.setCookbookId(this._cookbookId);
-                        };
-                        ContentWidget.prototype.onReadContentError = function (errorCode) {
-                            logger.error("Error on get content:" + errorCode);
-                        };
-                        ContentWidget.prototype.deleteRecipe = function (recipe) {
-                            this._cbkServiceProxy.deleteRecipe(this._cookbookId, recipe.id, this.onDeleteSuccess.bind(this), this.onDeleteError.bind(this));
-                        };
-                        ContentWidget.prototype.deleteCuisine = function (cuisineId) {
-                            this._cbkServiceProxy.deleteCuisine(this._cookbookId, cuisineId, this.onDeleteSuccess.bind(this), this.onDeleteError.bind(this));
-                        };
-                        ContentWidget.prototype.clearContent = function () {
-                            this._contentTable.empty();
-                            this._contentGrid.clear();
-                            this._cuisineContentGrids = [];
-                        };
-                        ContentWidget.prototype.initCuisineList = function (contentData) {
-                            var appendOption = function (optionElement, data) {
-                                optionElement.attr("value", data.name);
+                            ContentWidget.prototype.setCookbookId = function (cookbookId) {
+                                this._cookbookId = cookbookId;
                             };
-                            this._cuisinesList.empty();
-                            contentData.forEach(function (element, index, array) {
-                                this._cuisinesListGrid.addCell(element, appendOption);
-                            }.bind(this));
-                        };
-                        ContentWidget.prototype.initContent = function (contentData) {
-                            contentData.forEach(function (element, index, array) {
-                                var cuisineElement = this._contentGrid.addCell(element, this.appendCuisineContent.bind(this));
-                                this.appendRecipes(cuisineElement, element);
-                                //logger.debug("Created cuisine content for" + element.name);
-                            }.bind(this));
-                        };
-                        ContentWidget.prototype.appendCuisineContent = function (cuisineElement, data) {
-                            cuisineElement.removeClass(CUISINE_TEMPLATE_CLASS);
-                            var cuisineRef = cuisineElement.find(content.Selectors.CUISINE_NAME_JS_SELECTOR);
-                            var deleteBtn = cuisineElement.find(DELETE_CUISINE_BTN_SELECTOR);
-                            cuisineRef.text(data.name);
-                            cuisineRef.attr('id', data.id);
-                            cuisineRef.get(0)[content.Selectors.CUISINE_DATA_PROPERTY] = data.id;
-                            if (data.recipes.length > 0) {
-                                // No delete for cuisine with recipes
-                                deleteBtn.remove();
-                            }
-                            else {
-                                deleteBtn.attr('id', 'delete-cuisine-btn-' + data.id);
-                            }
-                        };
-                        ContentWidget.prototype.appendRecipes = function (cuisineElement, data) {
-                            // Create cuisine content with recipes
-                            var recipesTableElement = cuisineElement.find(RECIPE_CONTAINER_SELECTOR);
-                            var cuisineGrid = new CuisineGrid(data.name, recipesTableElement);
-                            //logger.debug("Recipes size 2 append:" + data.recipes.length);
-                            if (data.recipes.length > 0) {
-                                data.recipes.forEach(function (recipe, index, array) {
-                                    cuisineGrid.addCell(recipe, this.appendRecipe.bind(this));
+                            ContentWidget.readCookbook = function (cookbook) {
+                                ContentWidget.singleton.setCookbookId(cookbook.id);
+                                ContentWidget.singleton.readContent();
+                            };
+                            ContentWidget.getCookbookId = function () {
+                                return ContentWidget.singleton._cookbookId;
+                            };
+                            ContentWidget.prototype.readContent = function () {
+                                // bring data for templates init
+                                if (this._cookbookId != "") {
+                                    logger.info("Reading content...");
+                                    this._cbkServiceProxy.getCookbookContent(this._cookbookId, this.onReadContentSuccess.bind(this), this.onReadContentError.bind(this));
+                                }
+                            };
+                            /**
+                             * Handles application events, fires in the other widgets
+                             * @param appEventTag
+                             */
+                            ContentWidget.prototype.onAppEvent = function (appEventTag) {
+                                switch (appEventTag) {
+                                    case 'updateSuccess':
+                                    case 'createSuccess':
+                                        this.readContent();
+                                }
+                            };
+                            ContentWidget.prototype.onReadContentSuccess = function (contentData) {
+                                logger.info("Recieved content:" + JSON.stringify(contentData));
+                                this.clearContent();
+                                this.initCuisineList(contentData);
+                                this.initContent(contentData);
+                                views.EditRecipeWidget.setCookbookId(this._cookbookId);
+                            };
+                            ContentWidget.prototype.onReadContentError = function (errorCode) {
+                                logger.error("Error on get content:" + errorCode);
+                            };
+                            ContentWidget.prototype.deleteRecipe = function (recipe) {
+                                this._cbkServiceProxy.deleteRecipe(this._cookbookId, recipe.id, this.onDeleteSuccess.bind(this), this.onDeleteError.bind(this));
+                            };
+                            ContentWidget.prototype.deleteCuisine = function (cuisineId) {
+                                this._cbkServiceProxy.deleteCuisine(this._cookbookId, cuisineId, this.onDeleteSuccess.bind(this), this.onDeleteError.bind(this));
+                            };
+                            ContentWidget.prototype.clearContent = function () {
+                                this._contentTable.empty();
+                                this._contentGrid.clear();
+                                this._cuisineContentGrids = [];
+                            };
+                            ContentWidget.prototype.initCuisineList = function (contentData) {
+                                var appendOption = function (optionElement, data) {
+                                    optionElement.attr("value", data.name);
+                                };
+                                this._cuisinesList.empty();
+                                contentData.forEach(function (element, index, array) {
+                                    this._cuisinesListGrid.addCell(element, appendOption);
                                 }.bind(this));
-                            }
-                            else {
-                                // show empty list entry
-                                cuisineGrid.addCell(null, this.appendRecipe.bind(this));
-                            }
-                            this._cuisineContentGrids.push(cuisineGrid);
-                        };
-                        ContentWidget.prototype.appendRecipe = function (recipeListElement, data) {
-                            var recipeRef = recipeListElement.find(content.Selectors.RECIPE_REF_JS_SELECTOR); //'.recipe-ref-js');
-                            var editBtn = recipeListElement.find(EDIT_RECIPE_BTN_SELECTOR);
-                            var deleteBtn = recipeListElement.find(DELETE_RECIPE_BTN_SELECTOR);
-                            if (data) {
-                                recipeRef.removeAttr("data-l10n-id");
-                                recipeRef.text(data.name);
-                                recipeRef.attr('id', '' + data.id);
-                                recipeRef.get(0)[content.Selectors.RECIPE_DATA_PROPERTY] = data;
-                                editBtn.attr('id', 'edit-recipe-btn-' + data.id);
-                                deleteBtn.attr('id', 'delete-recipe-btn-' + data.id);
-                            }
-                            else {
-                                recipeRef.removeData("");
-                                recipeRef.replaceWith(recipeRef.text());
-                                recipeListElement.find("span").remove();
-                                editBtn.remove();
-                                deleteBtn.remove();
-                            }
-                            recipeListElement.removeClass("recipe-row-template");
-                        };
-                        ContentWidget.prototype.onDeleteSuccess = function () {
-                            views.ModalDialogsHandler.showOperationResult(4 /* deleteOk */);
-                            // Refresh content
-                            this.readContent();
-                        };
-                        ContentWidget.prototype.onDeleteError = function (errCode) {
-                            views.ModalDialogsHandler.showOperationResult(5 /* deleteFailed */);
-                        };
-                        return ContentWidget;
-                    })(views.BaseWidget);
-                    content.ContentWidget = ContentWidget;
-                    ;
-                })(content = views.content || (views.content = {}));
+                            };
+                            ContentWidget.prototype.initContent = function (contentData) {
+                                contentData.forEach(function (element, index, array) {
+                                    var cuisineElement = this._contentGrid.addCell(element, this.appendCuisineContent.bind(this));
+                                    this.appendRecipes(cuisineElement, element);
+                                    //logger.debug("Created cuisine content for" + element.name);
+                                }.bind(this));
+                            };
+                            ContentWidget.prototype.appendCuisineContent = function (cuisineElement, data) {
+                                cuisineElement.removeClass(CUISINE_TEMPLATE_CLASS);
+                                var cuisineRef = cuisineElement.find(content.Selectors.CUISINE_NAME_JS_SELECTOR);
+                                var deleteBtn = cuisineElement.find(DELETE_CUISINE_BTN_SELECTOR);
+                                cuisineRef.text(data.name);
+                                cuisineRef.attr('id', data.id);
+                                cuisineRef.get(0)[content.Selectors.CUISINE_DATA_PROPERTY] = data.id;
+                                if (data.recipes.length > 0) {
+                                    // No delete for cuisine with recipes
+                                    deleteBtn.remove();
+                                }
+                                else {
+                                    deleteBtn.attr('id', 'delete-cuisine-btn-' + data.id);
+                                }
+                            };
+                            ContentWidget.prototype.appendRecipes = function (cuisineElement, data) {
+                                // Create cuisine content with recipes
+                                var recipesTableElement = cuisineElement.find(RECIPE_CONTAINER_SELECTOR);
+                                var cuisineGrid = new CuisineGrid(data.name, recipesTableElement);
+                                //logger.debug("Recipes size 2 append:" + data.recipes.length);
+                                if (data.recipes.length > 0) {
+                                    data.recipes.forEach(function (recipe, index, array) {
+                                        cuisineGrid.addCell(recipe, this.appendRecipe.bind(this));
+                                    }.bind(this));
+                                }
+                                else {
+                                    // show empty list entry
+                                    cuisineGrid.addCell(null, this.appendRecipe.bind(this));
+                                }
+                                this._cuisineContentGrids.push(cuisineGrid);
+                            };
+                            ContentWidget.prototype.appendRecipe = function (recipeListElement, data) {
+                                var recipeRef = recipeListElement.find(content.Selectors.RECIPE_REF_JS_SELECTOR); //'.recipe-ref-js');
+                                var editBtn = recipeListElement.find(EDIT_RECIPE_BTN_SELECTOR);
+                                var deleteBtn = recipeListElement.find(DELETE_RECIPE_BTN_SELECTOR);
+                                if (data) {
+                                    recipeRef.removeAttr("data-l10n-id");
+                                    recipeRef.text(data.name);
+                                    recipeRef.attr('id', '' + data.id);
+                                    recipeRef.get(0)[content.Selectors.RECIPE_DATA_PROPERTY] = data;
+                                    editBtn.attr('id', 'edit-recipe-btn-' + data.id);
+                                    deleteBtn.attr('id', 'delete-recipe-btn-' + data.id);
+                                }
+                                else {
+                                    recipeRef.removeData("");
+                                    recipeRef.replaceWith(recipeRef.text());
+                                    recipeListElement.find("span").remove();
+                                    editBtn.remove();
+                                    deleteBtn.remove();
+                                }
+                                recipeListElement.removeClass("recipe-row-template");
+                            };
+                            ContentWidget.prototype.onDeleteSuccess = function () {
+                                views.ModalDialogsHandler.showOperationResult(views.OperationResultId.deleteOk);
+                                // Refresh content
+                                this.readContent();
+                            };
+                            ContentWidget.prototype.onDeleteError = function (errCode) {
+                                views.ModalDialogsHandler.showOperationResult(views.OperationResultId.deleteFailed);
+                            };
+                            return ContentWidget;
+                        })(views.BaseWidget);
+                        content.ContentWidget = ContentWidget;
+                        ;
+                    })(content = cookbook_4.content || (cookbook_4.content = {}));
+                })(cookbook = views.cookbook || (views.cookbook = {}));
             })(views = ui.views || (ui.views = {}));
-        })(ui = _cookbook.ui || (_cookbook.ui = {}));
+        })(ui = cookbook_3.ui || (cookbook_3.ui = {}));
     })(cookbook = alasch.cookbook || (alasch.cookbook = {}));
 })(alasch || (alasch = {}));
 /**
  * Created by aschneider on 11/7/2015.
  */
 /// <reference path="./BaseWidget.ts" />
-/// <reference path="./content/ContentWidget.ts" />
+/// <reference path="cookbook/content/ContentWidget.ts" />
 /// <reference path="../utils/TraceConsole.ts" />
 /// <reference path="../model/CookbookDTO.ts" />
 /// <reference path="../utils/Grid.ts" />
@@ -1640,7 +1655,7 @@ var alasch;
 var alasch;
 (function (alasch) {
     var cookbook;
-    (function (_cookbook) {
+    (function (cookbook_5) {
         var ui;
         (function (ui) {
             var views;
@@ -1649,10 +1664,12 @@ var alasch;
                 var utils = alasch.cookbook.ui.utils;
                 var model = alasch.cookbook.ui.model;
                 var http = alasch.cookbook.ui.http;
+                var content = alasch.cookbook.ui.views.cookbook.content;
                 var COOKBOOKS_TEMPLATE_CLASS = 'cookbook-template';
                 var COOKBOOKS_CONTAINER_SELECTOR = '#cookbooks-container';
                 var COOKBOOK_REF_SELECTOR = '.cookbook-js';
                 var COOKBOOK_DATA_PROPERTY = 'cookbook-data';
+                var COOKBOOK_VIEW_SELECTOR = '.cookbook-view';
                 var CookbookElementClickHandler = (function () {
                     function CookbookElementClickHandler() {
                     }
@@ -1660,6 +1677,7 @@ var alasch;
                         var cookbookRef = CookbookElementClickHandler.findCookbookRef($(eventObject.target));
                         var cookbook = CookbookElementClickHandler.extractCookbookData(cookbookRef);
                         if (cookbook) {
+                            content.ContentWidget.readCookbook(cookbook);
                         }
                         else {
                             logger.warning("No event object was received on click cookbook name!!");
@@ -1712,8 +1730,8 @@ var alasch;
                     CookbooksWidget.prototype.appendCookbook = function (cookbookElement, data) {
                         cookbookElement.removeClass(COOKBOOKS_TEMPLATE_CLASS);
                         var cookbookRef = cookbookElement.find(COOKBOOK_REF_SELECTOR);
-                        var hrefElement = cookbookElement.find('a');
-                        hrefElement.attr('href', '/cookbook/' + data.id);
+                        //var hrefElement: JQuery = cookbookElement.find('a');
+                        //hrefElement.attr('href','/cookbook/'+ data.id);
                         var cookbookNameBtn = cookbookElement.find('button');
                         var cookbookImage = cookbookElement.find('img');
                         cookbookRef.attr('id', data.id);
@@ -1725,7 +1743,73 @@ var alasch;
                 })(views.BaseWidget);
                 views.CookbooksWidget = CookbooksWidget;
             })(views = ui.views || (ui.views = {}));
-        })(ui = _cookbook.ui || (_cookbook.ui = {}));
+        })(ui = cookbook_5.ui || (cookbook_5.ui = {}));
+    })(cookbook = alasch.cookbook || (alasch.cookbook = {}));
+})(alasch || (alasch = {}));
+/**
+ * Created by aschneider on 11/14/2015.
+ */
+/// <reference path="../BaseWidget.ts" />
+/// <reference path="content/ContentWidget.ts" />
+/// <reference path="./ViewRecipeWidget.ts" />
+/// <reference path="./EditRecipeWidget.ts" />
+/// <reference path="../../utils/TraceConsole.ts" />
+/// <reference path="../../model/CookbookDTO.ts" />
+/// <reference path="../../utils/Helpers.ts" />
+/// <reference path="../../definitions/bootstrap.d.ts" />
+var alasch;
+(function (alasch) {
+    var cookbook;
+    (function (cookbook_6) {
+        var ui;
+        (function (ui) {
+            var views;
+            (function (views) {
+                var cookbook;
+                (function (cookbook) {
+                    var logger = alasch.cookbook.ui.utils.LoggerFactory.getLogger('TheCookbookWidget');
+                    var utils = alasch.cookbook.ui.utils;
+                    var model = alasch.cookbook.ui.model;
+                    var COOKBOOK_VIEW_CLASS = 'cookbook-view';
+                    var CookbookMain = (function () {
+                        function CookbookMain() {
+                            this._cbkServiceProxy = new ui.http.CookbookServiceProxy();
+                            this._contentWidget = new cookbook.content.ContentWidget(this._cbkServiceProxy);
+                            this._traceConsole = new utils.TraceConsole();
+                            this._viewRecipesWidget = views.ViewRecipeWidget.getInstance();
+                            this.createEditRecipeWidget();
+                            this._initialized = false;
+                        }
+                        CookbookMain.prototype.init = function () {
+                            //this._contentWidget.setCookbookId(cookbookId);
+                            if (!this._initialized) {
+                                this._cbkServiceProxy.init();
+                                this.initJQueryElements();
+                                this._initialized = true;
+                                logger.info("Initialized OK");
+                            }
+                        };
+                        CookbookMain.prototype.initJQueryElements = function () {
+                            this._contentWidget.readContent();
+                            this._editRecipeWidget.init();
+                            this._traceConsole.hide();
+                            this._navBar = $(utils.Helpers.idSelector('li-add-recipe-id'));
+                            this._navBar.on('click', this.onClick.bind(this));
+                        };
+                        CookbookMain.prototype.createEditRecipeWidget = function () {
+                            var appEventListener = new views.AppEventListener();
+                            appEventListener.notify = this._contentWidget.onAppEvent.bind(this._contentWidget);
+                            this._editRecipeWidget = new views.EditRecipeWidget(appEventListener, this._cbkServiceProxy);
+                        };
+                        CookbookMain.prototype.onClick = function () {
+                            this._editRecipeWidget.clear();
+                        };
+                        return CookbookMain;
+                    })();
+                    cookbook.CookbookMain = CookbookMain;
+                })(cookbook = views.cookbook || (views.cookbook = {}));
+            })(views = ui.views || (ui.views = {}));
+        })(ui = cookbook_6.ui || (cookbook_6.ui = {}));
     })(cookbook = alasch.cookbook || (alasch.cookbook = {}));
 })(alasch || (alasch = {}));
 /**
@@ -1734,6 +1818,7 @@ var alasch;
 /// <reference path="./definitions/jquery.d.ts" />
 /// <reference path="./views/BaseWidget.ts" />
 /// <reference path="./views/CookbooksWidget.ts" />
+/// <reference path="./views/cookbook/CookbookMain.ts" />
 /// <reference path="./utils/TraceConsole.ts" />
 ///<reference path="./http/CookbookRequestResponse.ts"/>
 ///<reference path="./http/CookbookServiceProxy.ts"/>
@@ -1769,42 +1854,6 @@ var alasch;
                 return AppClientMain;
             })();
             ui.AppClientMain = AppClientMain;
-            var CookbookMain = (function () {
-                function CookbookMain() {
-                    this._cbkServiceProxy = new ui.http.CookbookServiceProxy();
-                    this._contentWidget = new ui.views.content.ContentWidget(this._cbkServiceProxy);
-                    this._traceConsole = new ui.utils.TraceConsole();
-                    this._viewRecipesWidget = ui.views.ViewRecipeWidget.getInstance();
-                    this.createEditRecipeWidget();
-                    this._initialized = false;
-                }
-                CookbookMain.prototype.init = function (cookbookId) {
-                    this._contentWidget.setCookbookId(cookbookId);
-                    if (!this._initialized) {
-                        this._cbkServiceProxy.init();
-                        this.initJQueryElements();
-                        this._initialized = true;
-                        logger.info("Initialized OK");
-                    }
-                };
-                CookbookMain.prototype.initJQueryElements = function () {
-                    this._contentWidget.readContent();
-                    this._editRecipeWidget.init();
-                    this._traceConsole.hide();
-                    this._navBar = $(ui.utils.Helpers.idSelector('li-add-recipe-id'));
-                    this._navBar.on('click', this.onClick.bind(this));
-                };
-                CookbookMain.prototype.createEditRecipeWidget = function () {
-                    var appEventListener = new ui.views.AppEventListener();
-                    appEventListener.notify = this._contentWidget.onAppEvent.bind(this._contentWidget);
-                    this._editRecipeWidget = new ui.views.EditRecipeWidget(appEventListener, this._cbkServiceProxy);
-                };
-                CookbookMain.prototype.onClick = function () {
-                    this._editRecipeWidget.clear();
-                };
-                return CookbookMain;
-            })();
-            ui.CookbookMain = CookbookMain;
         })(ui = cookbook.ui || (cookbook.ui = {}));
     })(cookbook = alasch.cookbook || (alasch.cookbook = {}));
 })(alasch || (alasch = {}));
@@ -1821,10 +1870,13 @@ $(document).ready(function () {
     var appMain = new alasch.cookbook.ui.AppClientMain();
     appMain.init();
     console.log('AppClientMain document is ready !!');
-    var coookbookId = getCookbookId();
-    if (coookbookId !== "") {
-        var cookbookMain = new alasch.cookbook.ui.CookbookMain();
-        cookbookMain.init(coookbookId);
-        console.log('CookbookMain document is ready !!');
-    }
+    var cookbookMain = new alasch.cookbook.ui.views.cookbook.CookbookMain();
+    cookbookMain.init();
+    console.log('CookbookMain document is ready !!');
+    //var coookbookId = getCookbookId();
+    //if (coookbookId !== "") {
+    //    var cookbookMain = new alasch.cookbook.ui.CookbookMain();
+    //    cookbookMain.init(coookbookId);
+    //    console.log('CookbookMain document is ready !!');
+    //}
 });

@@ -1,12 +1,12 @@
 /**
  * Created by aschneider on 9/29/2015.
  */
-/// <reference path="./BaseWidget.ts" />
-/// <reference path="../utils/TraceConsole.ts" />
-/// <reference path="../model/CookbookDTO.ts" />
-/// <reference path="../utils/Grid.ts" />
-/// <reference path="../utils/Helpers.ts" />
-/// <reference path="../definitions/bootstrap.d.ts" />
+/// <reference path="./../BaseWidget.ts" />
+/// <reference path="../../utils/TraceConsole.ts" />
+/// <reference path="../../model/CookbookDTO.ts" />
+/// <reference path="../../utils/Grid.ts" />
+/// <reference path="../../utils/Helpers.ts" />
+/// <reference path="../../definitions/bootstrap.d.ts" />
 
 module alasch.cookbook.ui.views {
 

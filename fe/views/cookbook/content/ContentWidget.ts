@@ -2,17 +2,17 @@
  * Created by aschneider on 9/23/2015.
  */
 
-/// <reference path="./../BaseWidget.ts" />
-/// <reference path="../../utils/TraceConsole.ts" />
-/// <reference path="../../model/CookbookDTO.ts" />
-/// <reference path="../../utils/Grid.ts"/>
+/// <reference path="../../BaseWidget.ts" />
+/// <reference path="../../../utils/TraceConsole.ts" />
+/// <reference path="../../../model/CookbookDTO.ts" />
+/// <reference path="../../../utils/Grid.ts"/>
 /// <reference path="../ViewRecipeWidget.ts" />
-/// <reference path="../EditRecipeWidget.ts" />
-/// <reference path="../ModalDialog.ts" />
+/// <reference path="../../cookbook/EditRecipeWidget.ts" />
+/// <reference path="../../ModalDialog.ts" />
 /// <reference path="./ElementsHandlers.ts" />
 /// <reference path="./Selectors.ts" />
 
-module alasch.cookbook.ui.views.content {
+module alasch.cookbook.ui.views.cookbook.content {
 
     var logger:alasch.cookbook.ui.utils.Logger = alasch.cookbook.ui.utils.LoggerFactory.getLogger('ContentWidget');
     var utils = alasch.cookbook.ui.utils;
